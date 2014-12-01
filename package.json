@@ -1,0 +1,16 @@
+{
+  "name": "DialogBuilder",
+  "version": "0.1.0",
+  "description": "Game dialog builder for quests and interactive storyline",
+  "main": "web/index.html",
+  "scripts": {
+    "postinstall": "bower install && grunt",
+	"test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marius Tomas <marius@realmdev.lt>",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "bower": "^1.3.9"
+  }
+}

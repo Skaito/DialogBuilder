@@ -5,7 +5,7 @@
     "Marius Tomas <marius@realmdev.lt>"
   ],
   "description": "Game dialog builder for quests and interactive storyline",
-  "main": "index.html",
+  "main": "web/index.html",
   "license": "MIT",
   "homepage": "http://realmdev.lt/",
   "private": true,

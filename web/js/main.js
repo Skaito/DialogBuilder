@@ -2,10 +2,10 @@
 require.config({
 	baseUrl: './js',
 	paths: {
-		angular: '../bower_components/angular/angular.min',
-		bootstrap: '../bower_components/bootstrap/dist/js/bootstrap.min',
-		jquery: '../bower_components/jquery/dist/jquery.min',
-		snapsvg: '../bower_components/snap.svg/dist/snap.svg-min'
+		angular: 'libs/angular/angular.min',
+		bootstrap: 'libs/bootstrap/js/bootstrap.min',
+		jquery: 'libs/jquery/jquery.min',
+		snapsvg: 'libs/Snap.svg/snap.svg-min'
 	},
 	shim: {
 		angular: { exports: 'angular' },
