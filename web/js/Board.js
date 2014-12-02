@@ -1,5 +1,5 @@
 
-define(['jquery', 'snapsvg'], function($, Snap) {
+define(['jquery', 'snapsvg', 'Connection', 'NodeIO', 'Node'], function($, Snap, Connection, NodeIO, Node) {
 	
 	/** @class */
 	var self = function() {
@@ -14,32 +14,25 @@ define(['jquery', 'snapsvg'], function($, Snap) {
 				pos.left -= self.dragTarget.touchOffset.left;
 				pos.top -= self.dragTarget.touchOffset.top;
 				self.dragTarget.elem.css({left: pos.left, top: pos.top});
-				
-				if (self.dragTarget.inputConn) {
-					var ipos = self.dragTarget.getInputOffset();
-					self.dragTarget.inputConn.attr({x2: ipos.left, y2: ipos.top});
-				}
-				
-				if (self.dragTarget.outputConn) {
-					var opos = self.dragTarget.getOutputOffset();
-					self.dragTarget.outputConn.attr({x1: opos.left, y1: opos.top});
-				}
+				self.dragTarget.onMove();
 			}
 			if (self.dragConn) {
-				self.dragConn.attr({x2: pos.left, y2: pos.top});
+				self.dragConn.elem.attr({x2: pos.left, y2: pos.top});
 			}
 		});
 		this.elem.on('mouseup', function() {
 			self.dragTarget = null;
+			if (self.dragConn && !self.dragConn.endNodeIO) {
+				self.dragConn.setStartNodeIO(null);
+				self.dragConn.dispose();
+			}
 			self.dragConn = null;
 		});
 		var svgElem = $(document.createElementNS("http://www.w3.org/2000/svg", "svg"));
 		this.elem.append(svgElem);
 		self.svg = Snap(svgElem.get(0));
 		//self.svg.circle(100,100, 50);
-		var arrowHead = self.svg.path('M0,0L10,5L0,10');
-		arrowHead.attr({ stroke: '#000000', fill: 'none' });
-		this.markerEnd = arrowHead.marker(0, 0, 10, 10, 10, 5);
+		Connection.init(self.svg);
 		
 		//var line = self.svg.line(10, 10, 100, 100);
 		//line.attr({stroke: '#000000', markerEnd: this.markerEnd});
@@ -52,8 +45,6 @@ define(['jquery', 'snapsvg'], function($, Snap) {
 	self.prototype.dragConn = null;
 	/** @type Snap.Paper */
 	self.prototype.svg = null;
-	/** @type Snap.Element */
-	self.prototype.markerEnd = null;
 	
 	/**
 	 * @param {Node} node
@@ -71,20 +62,42 @@ define(['jquery', 'snapsvg'], function($, Snap) {
 			self.dragTarget = node;
 			e.stopImmediatePropagation();
 		});
-		node.input.on('mouseup', function(e) {
-			if (self.dragConn) {
-				var pos = node.getInputOffset();
-				node.inputConn = self.dragConn;
-				node.inputConn.attr({x2: pos.left, y2: pos.top});
+		var inFunc = function(io) {
+			if (self.dragConn) self.dragConn.setEndNodeIO(io);
+		};
+		var outFunc = function(e, io) {
+			self.dragConn = new Connection(io);
+			e.stopPropagation();
+			e.preventDefault();
+			return false;
+		};
+		var curFunc = function(io) {
+			if (io.type === NodeIO.TYPE_INPUT) {
+				if (self.dragConn) {
+					io.elem.css('cursor', 'crosshair');
+				} else {
+					io.elem.css('cursor', 'default');
+				}
+			} else if (io.type === NodeIO.TYPE_OUTPUT) {
+				if (self.dragConn) {
+					io.elem.css('cursor', 'not-allowed');
+				} else {
+					io.elem.css('cursor', 'e-resize');
+				}
 			}
-		});
-		node.output.on('mousedown', function(e) {
-			var pos = node.getOutputOffset();
-			self.dragConn = self.svg.line(pos.left, pos.top, pos.left, pos.top);
-			self.dragConn.attr({stroke: '#000000', markerEnd: self.markerEnd});
-			node.outputConn = self.dragConn;
-			e.stopImmediatePropagation();
-		});
+		};
+		for (var i = 0; i < node.ios.length; i++) {
+			(function(node) {
+				var io = node.ios[i];
+				if (io.type === NodeIO.TYPE_INPUT) {
+					io.elem.on('mouseup', function() { inFunc.call(node, io); });
+					io.elem.on('mousemove', function() { curFunc.call(node, io); });
+				} else if (io.type === NodeIO.TYPE_OUTPUT) {
+					io.elem.on('mousedown', function(e) { outFunc.call(node, e, io); });
+					io.elem.on('mousemove', function() { curFunc.call(node, io); });
+				}
+			})(node);
+		}
 		this.elem.append(node.elem);
 	};
 	
