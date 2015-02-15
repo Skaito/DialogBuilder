@@ -1,5 +1,7 @@
 module.exports = function(grunt) {
 	
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	
 	var depManager = function(task) {
 		var libSrc = './bower_components';
 		var libDst = './web/js/libs';
@@ -43,7 +45,16 @@ module.exports = function(grunt) {
 		}
 	};
 	
-	grunt.initConfig({});
+	grunt.initConfig({
+		watch: {
+			options: {
+				livereload: true
+			},
+			web: {
+				files: ['web/**/*']
+			}
+		}
+	});
 	
 	grunt.registerTask('build', function() {
 		depManager('build');
