@@ -22,6 +22,17 @@ function rebuild(bundler) {
 			.pipe(gulp.dest(distFolder));
 }
 
+gulp.task('bootstrap_icons', function() { 
+    return gulp.src('./node_modules/bootstrap/dist/fonts/**.*') 
+        .pipe(gulp.dest('./web/css/libs/bootstrap/fonts')); 
+});
+gulp.task('bootstrap_css', function() { 
+    return gulp.src('./node_modules/bootstrap/dist/css/**.*') 
+        .pipe(gulp.dest('./web/css/libs/bootstrap/css')); 
+});
+
+gulp.task('bootstrap', ['bootstrap_icons', 'bootstrap_css']);
+
 gulp.task('watch', function() {
 	var bundler = watchify(browserify(mainFile, watchify.args));
 	//bundler.transform('brfs');
@@ -29,7 +40,7 @@ gulp.task('watch', function() {
 	rebuild(bundler);
 });
 
-gulp.task('build', function() {
+gulp.task('build', ['bootstrap'], function() {
 	var bundler = browserify(mainFile);
 	rebuild(bundler);
 });

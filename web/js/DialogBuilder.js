@@ -1,5 +1,5 @@
 
-var $ = require('./libs/jquery/jquery.min');
+var $ = require('jquery');
 var Canvas2D = require('./canvas/Canvas2D');
 var Grid = require('./canvas/Grid');
 var Toolbar = require('./canvas/Toolbar');

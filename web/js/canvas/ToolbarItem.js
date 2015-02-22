@@ -1,5 +1,5 @@
 
-var $ = require('../libs/jquery/jquery.min');
+var $ = require('jquery');
 var Button = require('./Button');
 
 var self = $.extend(Object.create(Button), {

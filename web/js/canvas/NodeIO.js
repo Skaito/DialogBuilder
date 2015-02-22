@@ -1,5 +1,5 @@
 
-var $ = require('../libs/jquery/jquery.min');
+var $ = require('jquery');
 var Panel = require('./Panel');
 var Connector = require('./Connector');
 

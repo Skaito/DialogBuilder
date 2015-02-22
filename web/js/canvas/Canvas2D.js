@@ -1,5 +1,5 @@
 
-var $ = require('../libs/jquery/jquery.min');
+var $ = require('jquery');
 var MouseEntity = require('./MouseEntity');
 	
 var self = {

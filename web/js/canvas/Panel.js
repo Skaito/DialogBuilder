@@ -1,5 +1,5 @@
 
-var $ = require('../libs/jquery/jquery.min');
+var $ = require('jquery');
 var Entity = require('./Entity');
 var Canvas2D = require('./Canvas2D');
 

@@ -1,5 +1,5 @@
 
-var $ = require('../libs/jquery/jquery.min');
+var $ = require('jquery');
 var NodeIO = require('./NodeIO');
 var Node = require('./Node');
 var Label = require('./Label');
