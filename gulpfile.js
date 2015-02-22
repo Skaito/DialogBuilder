@@ -2,6 +2,7 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
+var livereload = require('gulp-livereload');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
@@ -36,8 +37,9 @@ gulp.task('bootstrap', ['bootstrap_icons', 'bootstrap_css']);
 gulp.task('watch', function() {
 	var bundler = watchify(browserify(mainFile, watchify.args));
 	//bundler.transform('brfs');
-	bundler.on('update', function() { rebuild(bundler); });
+	bundler.on('update', function() { rebuild(bundler).pipe(livereload()); });
 	rebuild(bundler);
+	livereload.listen();
 });
 
 gulp.task('build', ['bootstrap'], function() {
