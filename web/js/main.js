@@ -1,5 +1,8 @@
 
-require.config({
+//require('./libs/bootstrap/js/bootstrap.min');
+var DialogBuilder = require('./DialogBuilder');
+
+/*require.config({
 	baseUrl: './js',
 	paths: {
 		bootstrap: 'libs/bootstrap/js/bootstrap.min',
@@ -9,9 +12,7 @@ require.config({
 		jquery: { exports: 'jQuery' },
 		bootstrap: { deps: ['jquery'] }
 	}
-});
+});*/
 
-require(['DialogBuilder', 'bootstrap'], function(DialogBuilder) {
-	DialogBuilder.init();
-});
+DialogBuilder.init();
 

@@ -4,3 +4,5 @@
 /.c9/
 /nbproject/private/
 /web/js/libs/
+/web/js/bundle.js
+/web/js/bundle.js.map
