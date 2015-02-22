@@ -4,10 +4,26 @@ DialogBuilder
 Game dialog builder for quests and interactive storyline.
 This is node graph based conversation dialog builder.
 
-To use:
- * clone this repo
- * run npm install
- * and open web/index.html in your browser
+## Usage
+
+clone this repo
+```
+npm install
+```
+and open web/index.html in your browser
+
+## Develop
+
+clone this repo
+```
+npm install
+```
+```
+gulp watch
+```
+and open web/index.html in your browser
+
+## Other
 
 Demo: http://realmdev.lt/dialogbuilder/
 
