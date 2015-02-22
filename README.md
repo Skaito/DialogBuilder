@@ -25,7 +25,7 @@ and open web/index.html in your browser
 
 ## Other
 
-This project uses [NPM](http://npmjs.org/) (Node Package Manager). NPM is part of [NodeJs](http://nodejs.org/).
+This project uses [npm](http://npmjs.org/). npm is package manager and is part of [NodeJs](http://nodejs.org/).
 
 Demo: [here](http://realmdev.lt/dialogbuilder/).
 
