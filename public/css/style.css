@@ -1,56 +1,12 @@
 
-html, body { width: 100%; height: 100%; }
-
-body { background: #1d292b; overflow: hidden; }
-
-.container {
-	position: relative;
-}
-
-
-.board {
-	height: 300px;
-	border: 1px solid #aaaaaa;
-	position: relative;
-}
-
-.board svg {
-	position: absolute;
-	height: 100%;
+html, body {
 	width: 100%;
-	left: 0px;
-	top: 0px;
+	height: 100%;
 }
 
-.node {
-	position: absolute;
-	min-width: 40px;
-	min-height: 40px;
-	border: 1px solid #ff0000;
-	background: #ffffff;
-	cursor: move;
-}
-
-.node-input {
-	position: absolute;
-	width: 20px;
-	height: 10px;
-	background: #ffffff;
-	border: 1px solid #666666;
-	border-radius: 5px;
-	left: -10px;
-	top: 15px;
-	cursor: crosshair;
-}
-
-.node-output {
-	position: absolute;
-	width: 20px;
-	height: 10px;
-	background: #ffffff;
-	border: 1px solid #666666;
-	border-radius: 5px;
-	right: -10px;
-	top: 15px;
-	cursor: crosshair;
+body {
+	background: #1d292b;
+	overflow: hidden;
+	margin: 0px;
+	padding: 0px;
 }
