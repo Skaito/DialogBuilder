@@ -3,6 +3,8 @@ var Class = require('../lang/Class');
 var Entity = require('./Entity');
 var Canvas2D = require('./Canvas2D');
 
+'use strict';
+
 var self = Class.create(Entity, {
 	_x: 0,
 	_y: 0,

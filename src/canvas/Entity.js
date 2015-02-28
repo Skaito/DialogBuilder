@@ -1,6 +1,8 @@
 
 var Class = require('../lang/Class');
 
+'use strict';
+
 var self = Class.create({
 
 	initialize: function() {},

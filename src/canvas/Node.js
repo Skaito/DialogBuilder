@@ -3,6 +3,8 @@ var Class = require('../lang/Class');
 var NodeIO = require('./NodeIO');
 var Panel = require('./Panel');
 
+'use strict';
+
 var cConn = null, nodes = [], commonMouseUp = null;
 
 var self = Class.create(Panel, {

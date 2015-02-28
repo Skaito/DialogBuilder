@@ -4,7 +4,9 @@ var Node = require('./Node');
 var NodeIO = require('./NodeIO');
 var LoweredPanel = require('./LoweredPanel');
 var Label = require('./Label');
-	
+
+'use strict';
+
 var dlgIndex = 0;
 
 var self = Class.create(Node, {

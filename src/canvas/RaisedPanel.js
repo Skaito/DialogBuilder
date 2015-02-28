@@ -3,6 +3,8 @@ var Class = require('../lang/Class');
 var Panel = require('./Panel');
 var Canvas2D = require('./Canvas2D');
 
+'use strict';
+
 var self = Class.create(Panel, {
 	initialize: function(x, y, width, height) {
 		Panel.prototype.initialize.call(this, x, y, width, height);

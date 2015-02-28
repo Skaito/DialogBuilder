@@ -4,6 +4,8 @@ var NodeIO = require('./NodeIO');
 var Node = require('./Node');
 var Label = require('./Label');
 
+'use strict';
+
 var self = Class.create(Node, {
 
 	_titleLabel: null,

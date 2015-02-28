@@ -4,6 +4,8 @@ var Panel = require('./Panel');
 var RaisedPanel = require('./RaisedPanel');
 var Label = require('./Label');
 
+'use strict';
+
 var self = Class.create(Panel, {
 	
 	__static__: {

@@ -1,7 +1,9 @@
 
 var $ = require('jquery');
 var MouseEntity = require('./MouseEntity');
-	
+
+'use strict';
+
 var self = {
 	
 	_elem: null,

@@ -4,6 +4,8 @@ var Entity = require('./Entity');
 var ToolbarItem = require('./ToolbarItem');
 var Panel = require('./Panel');
 
+'use strict';
+
 var self = Class.create(Entity, {
 
 	_width: 0,

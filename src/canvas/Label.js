@@ -2,6 +2,8 @@
 var Class = require('../lang/Class');
 var Panel = require('./Panel');
 
+'use strict';
+
 var self = Class.create(Panel, {
 	
 	__static__: {

@@ -3,6 +3,8 @@ var Class = require('../lang/Class');
 var Panel = require('./Panel');
 var Connector = require('./Connector');
 
+'use strict';
+
 var self = Class.create(Panel, {
 
 	__static__: {

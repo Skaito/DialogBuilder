@@ -2,6 +2,8 @@
 var Class = require('../lang/Class');
 var Entity = require('./Entity');
 
+'use strict';
+
 var self = Class.create(Entity, {
 
 	_delta: 0,
