@@ -1,12 +1,11 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Button = require('./Button');
 
-var self = $.extend(Object.create(Button), {
+var self = Class.create(Button, {
 
-	init: function(title, width, height, clickAction) {
-		Button.init.call(this, title, 0, 0, width, height, clickAction);
-		return this;
+	initialize: function(title, width, height, clickAction) {
+		Button.prototype.initialize.call(this, title, 0, 0, width, height, clickAction);
 	}
 
 });

@@ -1,13 +1,16 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Panel = require('./Panel');
 var RaisedPanel = require('./RaisedPanel');
 var Label = require('./Label');
 
-var self = $.extend(Object.create(Panel), {
-	STATE_NORMAL: 0,
-	STATE_HOVER: 1,
-
+var self = Class.create(Panel, {
+	
+	__static__: {
+		STATE_NORMAL: 0,
+		STATE_HOVER: 1
+	},
+	
 	_basePanel: null,
 	_textLabel: null,
 	_state: null,
@@ -15,17 +18,17 @@ var self = $.extend(Object.create(Panel), {
 	_hoverBgColor: null,
 	clickAction: null,
 
-	init: function(text, x, y, width, height, clickAction) {
-		Panel.init.call(this, x, y, width, height);
-		this._basePanel = Object.create(RaisedPanel).init(this._x, this._y, this._width, this._height);
+	initialize: function(text, x, y, width, height, clickAction) {
+		Panel.prototype.initialize.call(this, x, y, width, height);
+		this._basePanel = new RaisedPanel(this._x, this._y, this._width, this._height);
 		this._defBgColor = this._basePanel.getBackgroundColor();
 		this._hoverBgColor = '#3b3b3b';
-		this._textLabel = Object.create(Label).init(text, this._x, this._y, this._width, this._height);
+		this._textLabel = new Label(text, this._x, this._y, this._width, this._height);
 		this._textLabel.setHorizontalAlignment(Label.ALIGN_CENTER);
 		this._textLabel.setVerticalAlignment(Label.ALIGN_MIDDLE);
 		this.clickAction = clickAction;
-		this._state = this.STATE_NORMAL;
-		return this;
+		this._state = self.STATE_NORMAL;
+		
 	},
 
 	setText: function(text) {
@@ -47,7 +50,7 @@ var self = $.extend(Object.create(Panel), {
 	act: function() {
 		this._basePanel.setPosition(this._x, this._y);
 		this._basePanel.setSize(this._width, this._height);
-		this._basePanel.setBackgroundColor(((this._state === this.STATE_HOVER) ? this._hoverBgColor : this._defBgColor));
+		this._basePanel.setBackgroundColor(((this._state === self.STATE_HOVER) ? this._hoverBgColor : this._defBgColor));
 		this._textLabel.setPosition(this._x, this._y + 2);
 		this._textLabel.setSize(this._width, this._height);
 	},

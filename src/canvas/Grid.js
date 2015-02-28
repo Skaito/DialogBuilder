@@ -1,15 +1,14 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Entity = require('./Entity');
 	
-var self = $.extend(Object.create(Entity), {
+var self = Class.create(Entity, {
 	_width: 0,
 	_height: 0,
 	_size: 20,
 	_delta: 0,
-	init: function() {
-		Entity.init.call(this);
-		return this;
+	initialize: function() {
+		Entity.prototype.initialize.call(this);
 	},
 	resize: function(width, height) {
 		this._width = width;

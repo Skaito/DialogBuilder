@@ -1,8 +1,8 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Entity = require('./Entity');
 	
-var self = $.extend(Object.create(Entity), {
+var self = Class.create(Entity, {
 
 	/** @type NodeIO */
 	source: null,
@@ -14,12 +14,11 @@ var self = $.extend(Object.create(Entity), {
 	_pA: null,
 	_rot: 0,
 
-	init: function() {
-		Entity.init.call(this);
+	initialize: function() {
+		Entity.prototype.initialize.call(this);
 		this._pS = {x: 0, y: 0};
 		this._pT = {x: 0, y: 0};
 		this._pA = [{x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}];
-		return this;
 	},
 
 	act: function(delta) {

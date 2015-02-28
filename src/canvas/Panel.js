@@ -1,22 +1,21 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Entity = require('./Entity');
 var Canvas2D = require('./Canvas2D');
 
-var self = $.extend(Object.create(Entity), {
+var self = Class.create(Entity, {
 	_x: 0,
 	_y: 0,
 	_width: 100,
 	_height: 100,
 	_backgroundColor: '#444444',
 
-	init: function(x, y, width, height) {
-		Entity.init.call(this);
+	initialize: function(x, y, width, height) {
+		Entity.prototype.initialize.call(this);
 		this._x = x;
 		this._y = y;
 		if (width) this._width = width;
 		if (height) this._height = height;
-		return this;
 	},
 
 	setPosition: function(x, y) {

@@ -1,18 +1,18 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Entity = require('./Entity');
 var ToolbarItem = require('./ToolbarItem');
 var Panel = require('./Panel');
 
-var self = $.extend(Object.create(Entity), {
+var self = Class.create(Entity, {
 
 	_width: 0,
 	_height: 40,
 	_items: null,
 	_basePanel: null,
 
-	init: function(canvas) {
-		Entity.init.call(this);
+	initialize: function(canvas) {
+		Entity.prototype.initialize.call(this);
 		this._items = [];
 		var thisSelf = this;
 		canvas.on('click', function() {
@@ -32,8 +32,7 @@ var self = $.extend(Object.create(Entity), {
 				}
 			}
 		});
-		this._basePanel = Object.create(Panel).init(0, 0, this._width, this._height);
-		return this;
+		this._basePanel = new Panel(0, 0, this._width, this._height);
 	},
 
 	addItem: function(item) {

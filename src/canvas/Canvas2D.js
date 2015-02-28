@@ -3,26 +3,31 @@ var $ = require('jquery');
 var MouseEntity = require('./MouseEntity');
 	
 var self = {
+	
 	_elem: null,
 	mouseEntity: null,
 	ctx: null,
+	
 	init: function() {
 		this._elem = $('<canvas>').css({width: '100%', height: '100%'}).attr({width: 300, height: 300});
 		this.ctx = this._elem.get(0).getContext("2d");
-		this.mouseEntity = Object.create(MouseEntity).init();
+		this.mouseEntity = new MouseEntity();
 		var thisSelf = this;
 		this._elem.on('mousemove', function(e) {
 			var off = thisSelf._elem.offset();
 			thisSelf.mouseEntity.setPosition((e.pageX - off.left), (e.pageY - off.top));
 		});
 	},
+	
 	getElem: function() {
 		return this._elem;
 	},
+	
 	on: function(event, func) {
 		this._elem.on(event, func);
 		return this;
 	},
+	
 	off: function(event, func) {
 		this._elem.off(event, func);
 		return this;
@@ -66,6 +71,7 @@ var self = {
 			ctx.stroke();
 		}
 	}
+	
 };
 
 module.exports = self;

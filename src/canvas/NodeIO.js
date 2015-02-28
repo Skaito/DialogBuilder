@@ -1,14 +1,16 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Panel = require('./Panel');
 var Connector = require('./Connector');
 
-var self = $.extend(Object.create(Panel), {
+var self = Class.create(Panel, {
 
-	TYPE_INPUT: 1,
-	TYPE_OUTPUT: 2,
-	STATE_NORMAL: 0,
-	STATE_HOVER: 1,
+	__static__: {
+		TYPE_INPUT: 1,
+		TYPE_OUTPUT: 2,
+		STATE_NORMAL: 0,
+		STATE_HOVER: 1
+	},
 
 	type: 0,
 	parent: null,
@@ -26,27 +28,26 @@ var self = $.extend(Object.create(Panel), {
 	 * @param {DialogNode} parent
 	 * @returns {NodeIO}
 	 */
-	init: function(canvas, type, parent) {
-		Panel.init.call(this, 0, 0, 11, 16);
+	initialize: function(canvas, type, parent) {
+		Panel.prototype.initialize.call(this, 0, 0, 11, 16);
 		this.type = type;
 		if (parent) this.parent = parent;
 		this._connectors = [];
 		this._mouseEntity = canvas.mouseEntity;
-		this._state = this.STATE_NORMAL;
+		this._state = self.STATE_NORMAL;
 		this._backgroundColor = this._defBgColor = '#373737';
 		this._hoverBgColor = '#444444';
-		return this;
 	},
 
 	hitTest: function(p) {
 		if (!p) return false;
 		var halfH = this._height / 2, x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-		if (this.type === this.TYPE_OUTPUT) {
+		if (this.type === self.TYPE_OUTPUT) {
 			x1 = this._x - (this._width - halfH),
 			y1 = this._y - halfH,
 			x2 = this._x + halfH,
 			y2 = this._y + halfH;
-		} else if (this.type === this.TYPE_INPUT) {
+		} else if (this.type === self.TYPE_INPUT) {
 			x2 = this._x + (this._width - halfH),
 			y2 = this._y + halfH,
 			x1 = this._x - halfH,
@@ -61,7 +62,7 @@ var self = $.extend(Object.create(Panel), {
 	 * @returns {Connector}
 	 */
 	connectTo: function(inputIO) {
-		var conn = Object.create(Connector).init();
+		var conn = new Connector();
 		conn.source = this;
 		conn.target = inputIO ? inputIO : null;
 		conn.defaultTarget = this._mouseEntity;
@@ -84,11 +85,11 @@ var self = $.extend(Object.create(Panel), {
 	},
 
 	act: function(delta) {
-		Panel.act.call(this, delta);
+		Panel.prototype.act.call(this, delta);
 		for (var i = 0; i < this._connectors.length; i++) {
 			this._connectors[i].act(delta);
 		}
-		this.setBackgroundColor(((this._state === this.STATE_HOVER) ? this._hoverBgColor : this._defBgColor));
+		this.setBackgroundColor(((this._state === self.STATE_HOVER) ? this._hoverBgColor : this._defBgColor));
 	},
 
 	render: function(ctx) {
@@ -99,14 +100,14 @@ var self = $.extend(Object.create(Panel), {
 		}
 		var halfH = this._height / 2, x = this._x + 0.5, y = this._y + 0.5;
 		ctx.beginPath();
-		if (this.type === this.TYPE_OUTPUT) {
+		if (this.type === self.TYPE_OUTPUT) {
 			ctx.moveTo(x - (this._width - halfH), y - halfH);
 			ctx.lineTo(x + (halfH - this._roundness), y - halfH);
 			ctx.arc(x + (halfH - this._roundness), y - halfH + this._roundness, this._roundness, -0.5 * Math.PI, 0);
 			ctx.lineTo(x + halfH, y + halfH - this._roundness);
 			ctx.arc(x + (halfH - this._roundness), y + halfH - this._roundness, this._roundness, 0, 0.5 * Math.PI);
 			ctx.lineTo(x - (this._width - halfH), y + halfH);
-		} else if (this.type === this.TYPE_INPUT) {
+		} else if (this.type === self.TYPE_INPUT) {
 			ctx.moveTo(x + (this._width - halfH), y - halfH);
 			ctx.lineTo(x - (halfH - this._roundness), y - halfH);
 			ctx.arc(x - (halfH - this._roundness), y - halfH + this._roundness, this._roundness, -0.5 * Math.PI, -Math.PI, true);

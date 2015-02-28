@@ -1,22 +1,19 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var NodeIO = require('./NodeIO');
 var Panel = require('./Panel');
-var LoweredPanel = require('./LoweredPanel');
-var Label = require('./Label');
 
 var cConn = null, nodes = [], commonMouseUp = null;
 
-var self = $.extend(Object.create(Panel), {
+var self = Class.create(Panel, {
 	_ios: null,
 	_mPos: null,
 	_mouseEntity: null,
 
-	init: function(canvas, x, y, width, height) {
-		Panel.init.call(this, x, y, width, height);
+	initialize: function(canvas, x, y, width, height) {
+		Panel.prototype.initialize.call(this, x, y, width, height);
 		this._ios = [];
 		this._setupEvents(canvas);
-		return this;
 	},
 
 	_setupEvents: function(canvas) {
@@ -88,7 +85,7 @@ var self = $.extend(Object.create(Panel), {
 	},
 
 	act: function(delta) {
-		Panel.act.call(this, delta);
+		Panel.prototype.act.call(this, delta);
 		for (var i = 0; i < this._ios.length; i++) {
 			if (this._ios[i].type === NodeIO.TYPE_INPUT) {
 				this._ios[i].setPosition(this._x - 3, this._y + (this._height / 2));

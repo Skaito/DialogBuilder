@@ -1,11 +1,11 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Panel = require('./Panel');
 var Canvas2D = require('./Canvas2D');
 
-var self = $.extend(Object.create(Panel), {
-	init: function(x, y, width, height) {
-		Panel.init.call(this, x, y, width, height);
+var self = Class.create(Panel, {
+	initialize: function(x, y, width, height) {
+		Panel.prototype.initialize.call(this, x, y, width, height);
 		this._backgroundColor = '#373737';
 		return this;
 	},

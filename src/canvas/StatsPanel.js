@@ -1,14 +1,13 @@
 
-var $ = require('jquery');
+var Class = require('../lang/Class');
 var Entity = require('./Entity');
 
-var self = $.extend(Object.create(Entity), {
+var self = Class.create(Entity, {
 
 	_delta: 0,
 
-	init: function() {
-		Entity.init.call(this);
-		return this;
+	initialize: function() {
+		Entity.prototype.initialize.call(this);
 	},
 
 	act: function(delta) {
