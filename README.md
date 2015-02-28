@@ -10,7 +10,7 @@ clone this repo then call
 ```
 npm install
 ```
-and open web/index.html in your browser
+and open public/index.html in your browser
 
 ## Develop
 
@@ -21,7 +21,7 @@ npm install
 ```
 gulp watch
 ```
-and open web/index.html in your browser
+and open public/index.html in your browser
 
 ## Other
 
