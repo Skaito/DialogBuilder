@@ -55,7 +55,7 @@ gulp.task('watch', function() {
 	return r;
 });
 
-gulp.task('build', ['copy_sources', 'bootstrap'], function() {
+gulp.task('build', ['bootstrap'], function() {
 	var bundler = browserify(mainFile);
 	return rebuild(bundler);
 });

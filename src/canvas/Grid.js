@@ -38,7 +38,7 @@ var self = Class.create(Entity, {
 			ctx.lineTo(x, this._height);
 		}
 		ctx.lineWidth = 1;
-		ctx.strokeStyle = "#3a4345";
+		ctx.strokeStyle = "#464646";
 		ctx.stroke();
 	}
 	

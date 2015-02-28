@@ -107,7 +107,7 @@ var self = Class.create(Entity, {
 	
 	render: function(ctx) {
 		//ctx.clearRect(0, 0, this._width, this._height);
-		ctx.fillStyle = "#1d292b";
+		ctx.fillStyle = "#272727";
 		ctx.fillRect(0, 0, this._width, this._height);
 		for (i = 0; i < this._nodes.length; i++) {
 			ctx.save();
