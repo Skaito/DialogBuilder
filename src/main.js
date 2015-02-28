@@ -3,4 +3,5 @@ var $ = require('jquery');
 window.jQuery = $; require('bootstrap');
 var DialogBuilder = require('./DialogBuilder');
 
-DialogBuilder.init();
+var app = new DialogBuilder();
+app.start();

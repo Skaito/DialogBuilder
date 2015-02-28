@@ -1,5 +1,7 @@
 
 var $ = require('jquery');
+var Class = require('./lang/Class');
+var Entity = require('./canvas/Entity');
 var Canvas2D = require('./canvas/Canvas2D');
 var Grid = require('./canvas/Grid');
 var Toolbar = require('./canvas/Toolbar');
@@ -10,97 +12,109 @@ var StatsPanel = require('./canvas/StatsPanel');
 
 'use strict';
 
-var jqWindow, nodes, uiNodes,
-	width, height, rootNode,
-	lastTick = (new Date()).getTime();
-
-var self = {
+var self = Class.create(Entity, {
 	
-	init: function() {
-		jqWindow = $(window);
+	_width: 0,
+	_height: 0,
+	_nodes: null,
+	_uiNodes: null,
+	
+	_rootNode: null,
+	
+	initialize: function() {
+		Entity.prototype.initialize.call(this);
+		
+		var thisSelf = this;
+		
 		Canvas2D.init();
-		Canvas2D.getElem().prependTo(document.body);
-		nodes = [];
-		uiNodes = [];
+		this._nodes = [];
+		this._uiNodes = [];
 		
 		var toolbar = new Toolbar(Canvas2D);
 		toolbar.addItem(new ToolbarItem("Add Root Node", 120, 24, function() {
 			var node = new RootNode(Canvas2D, 0, 0);
-			nodes.push(node);
+			thisSelf._nodes.push(node);
 			node.startDrag();
 		}));
 		toolbar.addItem(new ToolbarItem("Add Dialog Node", 120, 24, function() {
 			var node = new DialogNode(Canvas2D, 0, 0);
-			nodes.push(node);
+			thisSelf._nodes.push(node);
 			node.startDrag();
 		}));
-		uiNodes.push(toolbar);
-		uiNodes.push(new StatsPanel());
+		this._uiNodes.push(toolbar);
+		this._uiNodes.push(new StatsPanel());
 
-		nodes.push(new Grid());
+		this._nodes.push(new Grid());
 
-		nodes.push(rootNode = new RootNode(Canvas2D, 0, 0));
+		this._nodes.push(this._rootNode = new RootNode(Canvas2D, 0, 0));
 
 		var nodeA = new DialogNode(Canvas2D, 150, 60);
-		nodes.push(nodeA);
+		this._nodes.push(nodeA);
 
 		var nodeB = new DialogNode(Canvas2D, 600, 80);
-		nodes.push(nodeB);
+		this._nodes.push(nodeB);
 
-		rootNode.getIO(0).connectTo(nodeA.getIO(0));
+		this._rootNode.getIO(0).connectTo(nodeA.getIO(0));
 		nodeA.getIO(1).connectTo(nodeB.getIO(0));
-
-
+	},
+	
+	start: function() {
+		var jqWindow = $(window), renderFrame, thisSelf = this, lastTick = (new Date()).getTime();
+		Canvas2D.getElem().prependTo(document.body);
+		
+		jqWindow.on('resize', function() { thisSelf.resize(jqWindow.width(), jqWindow.height()); }).trigger('resize');
+		
+		this._rootNode.setPosition(10, (this._height - this._rootNode.getSize().height) / 2);
+		
 		if (!('requestAnimationFrame' in window)) {
 			window.requestAnimationFrame = (window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame);
 		}
-		jqWindow.on('resize', function() { self.resize(); });
-		this.resize();
-
-		rootNode.setPosition(10, (height - rootNode.getSize().height) / 2);
-
-		var renderFrame;
 		window.requestAnimationFrame(renderFrame = function() {
-			self.render(Canvas2D.ctx);
+			var tick = (new Date()).getTime(), delta = tick - lastTick;
+			lastTick = tick;
+			thisSelf.act(delta);
+			thisSelf.render(Canvas2D.ctx);
 			window.requestAnimationFrame(renderFrame);
 		});
 	},
 
-	resize: function() {
-		width = jqWindow.width();
-		height = jqWindow.height();
+	resize: function(width, height) {
+		this._width = width;
+		this._height = height;
 		Canvas2D.getElem().attr({ width: width, height: height });
-		for (var i = 0; i < nodes.length; i++) {
-			nodes[i].resize(width, height);
+		for (var i = 0; i < this._nodes.length; i++) {
+			this._nodes[i].resize(width, height);
 		}
-		for (var i = 0; i < uiNodes.length; i++) {
-			uiNodes[i].resize(width, height);
+		for (var i = 0; i < this._uiNodes.length; i++) {
+			this._uiNodes[i].resize(width, height);
 		}
 	},
-
+	
+	act: function(delta) {
+		for (var i = 0; i < this._nodes.length; i++) {
+			this._nodes[i].act(delta);
+		}
+		for (var i = 0; i < this._uiNodes.length; i++) {
+			this._uiNodes[i].act(delta);
+		}
+	},
+	
 	render: function(ctx) {
-		var i, tick = (new Date()).getTime(), delta = tick - lastTick;
-		lastTick = tick;
-		for (i = 0; i < nodes.length; i++) {
-			nodes[i].act(delta);
-		}
-		for (i = 0; i < uiNodes.length; i++) {
-			uiNodes[i].act(delta);
-		}
-		ctx.clearRect(0, 0, width, height);
+		//ctx.clearRect(0, 0, this._width, this._height);
 		ctx.fillStyle = "#1d292b";
-		ctx.fillRect(0, 0, width, height);
-		for (i = 0; i < nodes.length; i++) {
+		ctx.fillRect(0, 0, this._width, this._height);
+		for (i = 0; i < this._nodes.length; i++) {
 			ctx.save();
-			nodes[i].render(ctx);
+			this._nodes[i].render(ctx);
 			ctx.restore();
 		}
-		for (i = 0; i < uiNodes.length; i++) {
+		for (i = 0; i < this._uiNodes.length; i++) {
 			ctx.save();
-			uiNodes[i].render(ctx);
+			this._uiNodes[i].render(ctx);
 			ctx.restore();
 		}
 	}
-};
+	
+});
 
 module.exports = self;
