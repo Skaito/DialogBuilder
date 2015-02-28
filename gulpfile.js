@@ -3,6 +3,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
 var livereload = require('gulp-livereload');
+var rimraf = require('gulp-rimraf');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
@@ -34,7 +35,18 @@ gulp.task('bootstrap_css', function() { 
 
 gulp.task('bootstrap', ['bootstrap_icons', 'bootstrap_css']);
 
+gulp.task('clean', function() {
+	return gulp.src([
+			'./public/js/libs',
+			'./public/js/bundle.js',
+			'./public/js/bundle.js.map',
+			'./public/css/libs'
+		], { read: false })
+		.pipe(rimraf());
+});
+
 gulp.task('watch', function() {
+	watchify.args.debug = true;
 	var bundler = watchify(browserify(mainFile, watchify.args));
 	//bundler.transform('brfs');
 	bundler.on('update', function() { rebuild(bundler).pipe(livereload()); });
@@ -42,7 +54,7 @@ gulp.task('watch', function() {
 	livereload.listen();
 });
 
-gulp.task('build', ['bootstrap'], function() {
+gulp.task('build', ['copy_sources', 'bootstrap'], function() {
 	var bundler = browserify(mainFile);
 	rebuild(bundler);
 });
