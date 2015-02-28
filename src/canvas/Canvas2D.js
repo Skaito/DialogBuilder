@@ -1,5 +1,4 @@
 
-var $ = require('jquery');
 var MouseEntity = require('./MouseEntity');
 
 'use strict';
@@ -7,31 +6,53 @@ var MouseEntity = require('./MouseEntity');
 var self = {
 	
 	_elem: null,
+	_scale: {x: 1, y: 1},
 	mouseEntity: null,
 	ctx: null,
 	
 	init: function() {
-		this._elem = $('<canvas>').css({width: '100%', height: '100%'}).attr({width: 300, height: 300});
-		this.ctx = this._elem.get(0).getContext("2d");
+		this._elem = document.createElement('canvas');
+		this.setSize(300, 300);
+		this.ctx = this._elem.getContext('2d');
 		this.mouseEntity = new MouseEntity();
 		var thisSelf = this;
-		this._elem.on('mousemove', function(e) {
-			var off = thisSelf._elem.offset();
-			thisSelf.mouseEntity.setPosition((e.pageX - off.left), (e.pageY - off.top));
-		});
+		this._elem.addEventListener('mousemove', function(e) {
+			var pos = thisSelf.getPosition();
+			thisSelf.mouseEntity.setPosition((e.pageX - pos.x), (e.pageY - pos.y));
+		}, false);
 	},
 	
 	getElem: function() {
 		return this._elem;
 	},
 	
+	getPosition: function() {
+		var b = this._elem.getBoundingClientRect();
+		return {
+			x: (b.left + window.pageXOffset - document.documentElement.clientLeft),
+			y: (b.top + window.pageYOffset - document.documentElement.clientTop)
+		};
+	},
+	
+	setScale: function(scaleX, scaleY) {
+		this._scale.x = scaleX;
+		this._scale.y = scaleY;
+	},
+	
+	setSize: function(width, height) {
+		this._elem.style.width = width + 'px';
+		this._elem.style.height = height + 'px';
+		this._elem.setAttribute('width', width * this._scale.x);
+		this._elem.setAttribute('height', height * this._scale.y);
+	},
+	
 	on: function(event, func) {
-		this._elem.on(event, func);
+		this._elem.addEventListener(event, func, false);
 		return this;
 	},
 	
 	off: function(event, func) {
-		this._elem.off(event, func);
+		this._elem.removeEventListener(event, func, false);
 		return this;
 	},
 

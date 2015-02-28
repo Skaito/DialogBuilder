@@ -1,5 +1,4 @@
 
-var $ = require('jquery');
 var Class = require('./lang/Class');
 var Entity = require('./canvas/Entity');
 var Canvas2D = require('./canvas/Canvas2D');
@@ -59,10 +58,17 @@ var self = Class.create(Entity, {
 	},
 	
 	start: function() {
-		var jqWindow = $(window), renderFrame, thisSelf = this, lastTick = (new Date()).getTime();
-		Canvas2D.getElem().prependTo(document.body);
+		var renderFrame, resizeFunc, thisSelf = this, lastTick = (new Date()).getTime();
+		if (document.body.firstChild) {
+			document.body.insertBefore(Canvas2D.getElem(), document.body.firstChild);
+		} else {
+			document.body.appendChild(Canvas2D.getElem());
+		}
 		
-		jqWindow.on('resize', function() { thisSelf.resize(jqWindow.width(), jqWindow.height()); }).trigger('resize');
+		window.addEventListener('resize', resizeFunc = function() {
+			thisSelf.resize(document.documentElement.clientWidth, document.documentElement.clientHeight);
+		}, false);
+		resizeFunc();
 		
 		this._rootNode.setPosition(10, (this._height - this._rootNode.getSize().height) / 2);
 		
@@ -81,7 +87,7 @@ var self = Class.create(Entity, {
 	resize: function(width, height) {
 		this._width = width;
 		this._height = height;
-		Canvas2D.getElem().attr({ width: width, height: height });
+		Canvas2D.setSize(width, height);
 		for (var i = 0; i < this._nodes.length; i++) {
 			this._nodes[i].resize(width, height);
 		}
