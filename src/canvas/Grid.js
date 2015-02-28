@@ -5,20 +5,25 @@ var Entity = require('./Entity');
 'use strict';
 
 var self = Class.create(Entity, {
+	
 	_width: 0,
 	_height: 0,
 	_size: 20,
 	_delta: 0,
+	
 	initialize: function() {
 		Entity.prototype.initialize.call(this);
 	},
+	
 	resize: function(width, height) {
 		this._width = width;
 		this._height = height;
 	},
+	
 	act: function(delta) {
 		this._delta = delta;
 	},
+	
 	render: function(ctx) {
 		var x, y;
 		ctx.beginPath();
@@ -36,6 +41,7 @@ var self = Class.create(Entity, {
 		ctx.strokeStyle = "#3a4345";
 		ctx.stroke();
 	}
+	
 });
 
 module.exports = self;

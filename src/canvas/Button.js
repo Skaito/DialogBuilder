@@ -61,6 +61,7 @@ var self = Class.create(Panel, {
 		this._basePanel.render(ctx);
 		this._textLabel.render(ctx);
 	}
+	
 });
 
 module.exports = self;

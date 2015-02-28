@@ -30,6 +30,7 @@ var self = Class.create(Node, {
 		Node.prototype.render.call(this, ctx);
 		this._titleLabel.render(ctx);
 	}
+	
 });
 
 module.exports = self;

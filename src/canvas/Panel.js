@@ -6,6 +6,7 @@ var Canvas2D = require('./Canvas2D');
 'use strict';
 
 var self = Class.create(Entity, {
+	
 	_x: 0,
 	_y: 0,
 	_width: 100,
@@ -73,6 +74,7 @@ var self = Class.create(Entity, {
 		this.renderShadow(ctx);
 		this.renderBody(ctx);
 	}
+	
 });
 
 module.exports = self;

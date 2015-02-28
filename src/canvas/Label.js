@@ -20,30 +20,38 @@ var self = Class.create(Panel, {
 	_text: null,
 	_vAlign: null,
 	_hAlign: null,
+	
 	initialize: function(text, x, y, width, height) {
 		Panel.prototype.initialize.call(this, x, y, width, height);
 		this._text = text;
 		this._vAlign = self.ALIGN_TOP;
 		this._hAlign = self.ALIGN_LEFT;
 	},
+	
 	setFont: function(font) {
 		this._font = font;
 	},
+	
 	setColor: function(color) {
 		this._color = color;
 	},
+	
 	setText: function(text) {
 		this._text = text;
 	},
+	
 	getText: function() {
 		return this._text;
 	},
+	
 	setVerticalAlignment: function(align) {
 		this._vAlign = align;
 	},
+	
 	setHorizontalAlignment: function(align) {
 		this._hAlign = align;
 	},
+	
 	render: function(ctx) {
 		if (typeof this._text === 'string' || typeof this._text === 'number') {
 			//ctx.fillStyle = "#000000"; ctx.fillRect(this._x, this._y, this._width, this._height);
@@ -72,6 +80,7 @@ var self = Class.create(Panel, {
 			ctx.fillText(this._text, x, y);
 		}
 	}
+	
 });
 
 module.exports = self;

@@ -6,11 +6,13 @@ var Canvas2D = require('./Canvas2D');
 'use strict';
 
 var self = Class.create(Panel, {
+	
 	initialize: function(x, y, width, height) {
 		Panel.prototype.initialize.call(this, x, y, width, height);
 		this._backgroundColor = '#373737';
 		return this;
 	},
+	
 	render: function(ctx) {
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = '#616161';
@@ -21,6 +23,7 @@ var self = Class.create(Panel, {
 		ctx.strokeStyle = '#2b2b2b';
 		Canvas2D.roundRect(ctx, this._x + 0.5, this._y + 1.5, this._width, this._height - 2, 3, true, true);
 	}
+	
 });
 
 module.exports = self;

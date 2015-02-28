@@ -8,6 +8,7 @@ var Panel = require('./Panel');
 var cConn = null, nodes = [], commonMouseUp = null;
 
 var self = Class.create(Panel, {
+	
 	_ios: null,
 	_mPos: null,
 	_mouseEntity: null,
@@ -111,6 +112,7 @@ var self = Class.create(Panel, {
 		this.renderIOs(ctx);
 		this.renderBody(ctx);
 	}
+	
 });
 
 module.exports = self;
