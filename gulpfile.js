@@ -50,13 +50,14 @@ gulp.task('watch', function() {
 	var bundler = watchify(browserify(mainFile, watchify.args));
 	//bundler.transform('brfs');
 	bundler.on('update', function() { rebuild(bundler).pipe(livereload()); });
-	rebuild(bundler);
+	var r = rebuild(bundler);
 	livereload.listen();
+	return r;
 });
 
 gulp.task('build', ['copy_sources', 'bootstrap'], function() {
 	var bundler = browserify(mainFile);
-	rebuild(bundler);
+	return rebuild(bundler);
 });
 
 gulp.task('default', ['build']);
