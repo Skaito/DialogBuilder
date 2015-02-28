@@ -1,9 +1,7 @@
 
 /node_modules/
-/bower_components/
 /.c9/
 /nbproject/private/
-/web/js/libs/
-/web/js/bundle.js
-/web/js/bundle.js.map
-/web/css/libs/
+/public/css/libs/
+/public/js/bundle.js.map
+/public/js/bundle.js

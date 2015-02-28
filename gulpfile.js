@@ -7,8 +7,8 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
 var browserify = require('browserify');
-var mainFile = './web/js/main.js';
-var distFolder = './web/js/';
+var mainFile = './src/main.js';
+var distFolder = './public/js/';
 var destFile = 'bundle.js';
 
 function rebuild(bundler) {
@@ -25,11 +25,11 @@ function rebuild(bundler) {
 
 gulp.task('bootstrap_icons', function() { 
     return gulp.src('./node_modules/bootstrap/dist/fonts/**.*') 
-        .pipe(gulp.dest('./web/css/libs/bootstrap/fonts')); 
+        .pipe(gulp.dest('./public/css/libs/bootstrap/fonts')); 
 });
 gulp.task('bootstrap_css', function() { 
     return gulp.src('./node_modules/bootstrap/dist/css/**.*') 
-        .pipe(gulp.dest('./web/css/libs/bootstrap/css')); 
+        .pipe(gulp.dest('./public/css/libs/bootstrap/css')); 
 });
 
 gulp.task('bootstrap', ['bootstrap_icons', 'bootstrap_css']);
