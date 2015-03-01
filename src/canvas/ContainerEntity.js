@@ -13,14 +13,26 @@ var self = Class.create(Entity, {
 		this._children = [];
 	},
 	
+	/**
+	 * @param {Entity} child
+	 */
 	addChild: function(child) {
 		var idx = this._children.indexOf(child);
-		if (idx < 0) this._children.push(child);
+		if (idx < 0) {
+			this._children.push(child);
+			child._parent = this;
+		}
 	},
 	
+	/**
+	 * @param {Entity} child
+	 */
 	removeChild: function(child) {
 		var idx = this._children.indexOf(child);
-		if (idx >= 0) this._children.splce(idx, 1);
+		if (idx >= 0) {
+			this._children.splce(idx, 1);
+			child._parent = null;
+		}
 	},
 	
 	resize: function(width, height) {
