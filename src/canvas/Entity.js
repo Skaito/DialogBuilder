@@ -11,7 +11,7 @@ var self = Class.create({
 	
 	act: function(delta) {},
 	
-	renser: function(ctx) {}
+	render: function(ctx) {}
 
 });
 
