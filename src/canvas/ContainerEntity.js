@@ -56,6 +56,14 @@ var self = Class.create(Entity, {
 			this._children[i].render(ctx);
 			ctx.restore();
 		}
+	},
+	
+	destroy: function() {
+		var i;
+		for (i = 0; i < this._children.length; i++) {
+			this._children[i].destroy();
+		}
+		this._children.splice(0, this._children.length);
 	}
 
 });

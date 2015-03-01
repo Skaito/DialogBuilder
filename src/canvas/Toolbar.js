@@ -69,6 +69,16 @@ var self = Class.create(Entity, {
 				ctx.restore();
 			}
 		}
+	},
+	
+	destroy: function() {
+		for (var i = 0; i < this._items.length; i++) {
+			this._items[i].destroy();
+		}
+		this._items.splice(0, this._items.length);
+		this._basePanel.destroy();
+		this._basePanel = null;
+		Entity.prototype.destroy.call(this);
 	}
 
 });

@@ -3,6 +3,7 @@ var Class = require('../lang/Class');
 var NodeIO = require('./NodeIO');
 var Connector = require('./Connector');
 var Panel = require('./Panel');
+var Point = require('../math/Point');
 
 'use strict';
 
@@ -13,17 +14,21 @@ var self = Class.create(Panel, {
 	_ios: null,
 	_mPos: null,
 	_mouseEntity: null,
+	_events: null,
+	_canvas: null,
 
 	initialize: function(canvas, x, y, width, height) {
 		Panel.prototype.initialize.call(this, x, y, width, height);
 		this._ios = [];
+		this._events = {};
+		this._canvas = canvas;
 		this._setupEvents(canvas);
 	},
 
 	_setupEvents: function(canvas) {
 		this._mouseEntity = canvas.mouseEntity;
 		var thisSelf = this;
-		canvas.on('mousedown', function() {
+		canvas.on('mousedown', this._events.mousedown = function() {
 			var mOff = canvas.mouseEntity.getPosition();
 			if (thisSelf.hitTest(mOff)) {
 				thisSelf._mPos = {
@@ -43,9 +48,9 @@ var self = Class.create(Panel, {
 					}
 				}
 			}
-		}).on('mouseup', function() {
+		}).on('mouseup', this._events.mouseup = function() {
 			thisSelf._mPos = null;
-		}).on('mousemove', function() {
+		}).on('mousemove', this._events.mousemove = function() {
 			var mOff = canvas.mouseEntity.getPosition();
 			if (thisSelf._mPos) {
 				thisSelf._x = (mOff.x - thisSelf._mPos.x);
@@ -112,7 +117,7 @@ var self = Class.create(Panel, {
 	},
 
 	startDrag: function() {
-		this._mPos = { x: 10, y: 10 };
+		this._mPos = new Point(10, 10);
 		var mOff = this._mouseEntity.getPosition();
 		this._x = (mOff.x - this._mPos.x);
 		this._y = (mOff.y - this._mPos.y);
@@ -146,6 +151,19 @@ var self = Class.create(Panel, {
 		this.renderShadow(ctx);
 		this.renderIOs(ctx);
 		this.renderBody(ctx);
+	},
+	
+	destroy: function() {
+		for (var k in this._events) {
+			this._canvas.off(k, this._events[k]);
+			this._events[k] = null;
+		}
+		this._events = {};
+		for (var i = 0; i < this._ios.length; i++) {
+			this._ios[i].destroy();
+		}
+		this._ios.splice(0, this._ios.length);
+		Panel.prototype.destroy.call(this);
 	}
 	
 });

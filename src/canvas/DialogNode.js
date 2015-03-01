@@ -48,7 +48,16 @@ var self = Class.create(Node, {
 		Node.prototype.render.call(this, ctx);
 		this._textPanel.render(ctx);
 		this._titleLabel.render(ctx);
+	},
+	
+	destroy: function() {
+		this._textPanel.destroy();
+		this._textPanel = null;
+		this._titleLabel.destroy();
+		this._titleLabel = null;
+		Node.prototype.destroy.call(this);
 	}
+	
 });
 
 module.exports = self;

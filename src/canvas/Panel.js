@@ -2,6 +2,7 @@
 var Class = require('../lang/Class');
 var Entity = require('./Entity');
 var Canvas2D = require('./Canvas2D');
+var Point = require('../math/Point');
 
 'use strict';
 
@@ -26,8 +27,9 @@ var self = Class.create(Entity, {
 		this._y = y;
 	},
 
+	/** @return {Point} */
 	getPosition: function() {
-		return {x: this._x, y: this._y};
+		return new Point(this._x, this._y);
 	},
 
 	setSize: function(width, height) {

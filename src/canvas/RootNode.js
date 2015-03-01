@@ -29,6 +29,12 @@ var self = Class.create(Node, {
 	render: function(ctx) {
 		Node.prototype.render.call(this, ctx);
 		this._titleLabel.render(ctx);
+	},
+	
+	destroy: function() {
+		this._titleLabel.destroy();
+		this._titleLabel = null;
+		Node.prototype.destroy.call(this);
 	}
 	
 });

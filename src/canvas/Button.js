@@ -60,6 +60,15 @@ var self = Class.create(Panel, {
 	render: function(ctx) {
 		this._basePanel.render(ctx);
 		this._textLabel.render(ctx);
+	},
+	
+	destroy: function() {
+		this._basePanel.destroy();
+		this._textLabel.destroy();
+		this._basePanel = null;
+		this._textLabel = null;
+		this.clickAction = null;
+		Panel.prototype.destroy.call(this);
 	}
 	
 });

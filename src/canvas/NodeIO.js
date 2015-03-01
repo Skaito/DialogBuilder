@@ -147,6 +147,16 @@ var self = Class.create(Panel, {
 		ctx.fillStyle = this._backgroundColor;
 		ctx.fill();
 		ctx.stroke();
+	},
+	
+	destroy: function() {
+		var i, c;
+		for (i = (this._connectors.length - 1); i >= 0; i--) {
+			c = this._connectors[i];
+			this.disconnect(c);
+			c.destroy();
+		}
+		Panel.prototype.destroy.call(this);
 	}
 
 });

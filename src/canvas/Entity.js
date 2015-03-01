@@ -13,7 +13,9 @@ var self = Class.create({
 	
 	act: function(delta) {},
 	
-	render: function(ctx) {}
+	render: function(ctx) {},
+	
+	destroy: function() {}
 
 });
 
