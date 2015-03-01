@@ -61,12 +61,37 @@ var self = Class.create(Panel, {
 
 	/**
 	 * @param {NodeIO} inputIO
+	 * @param {Connector} conn
 	 * @returns {Connector}
 	 */
-	connectTo: function(inputIO) {
-		var conn = new Connector();
+	connectTo: function(inputIO, conn) {
+		if (!conn) {
+			conn = new Connector();
+		} else {
+			if (conn.source) conn.source.disconnect(conn);
+			if (conn.target) conn.target.disconnect(conn);
+		}
 		conn.source = this;
 		conn.target = inputIO ? inputIO : null;
+		conn.defaultTarget = this._mouseEntity;
+		this._connectors.push(conn);
+		return conn;
+	},
+	
+	/**
+	 * @param {NodeIO} inputIO
+	 * @param {Connector} conn
+	 * @returns {Connector}
+	 */
+	connectFrom: function(inputIO, conn) {
+		if (!conn) {
+			conn = new Connector();
+		} else {
+			if (conn.source) conn.source.disconnect(conn);
+			if (conn.target) conn.target.disconnect(conn);
+		}
+		conn.source = inputIO ? inputIO : null;
+		conn.target = this;
 		conn.defaultTarget = this._mouseEntity;
 		this._connectors.push(conn);
 		return conn;

@@ -1,6 +1,7 @@
 
 var Class = require('../lang/Class');
 var NodeIO = require('./NodeIO');
+var Connector = require('./Connector');
 var Panel = require('./Panel');
 
 'use strict';
@@ -33,6 +34,12 @@ var self = Class.create(Panel, {
 				for (var i = 0; i < thisSelf._ios.length; i++) {
 					if (thisSelf._ios[i].type === NodeIO.TYPE_OUTPUT && thisSelf._ios[i].hitTest(mOff)) {
 						cConn = thisSelf._ios[i].connectTo(null);
+					} else {
+						for (var n = 0; n < thisSelf._ios[i]._connectors.length; n++) {
+							if (thisSelf._ios[i]._connectors[n].hitTest(mOff)) {
+								cConn = thisSelf._ios[i]._connectors[n];
+							}
+						}
 					}
 				}
 			}
@@ -49,26 +56,54 @@ var self = Class.create(Panel, {
 					thisSelf._ios[i].setState(NodeIO.STATE_HOVER);
 				} else {
 					thisSelf._ios[i].setState(NodeIO.STATE_NORMAL);
+					for (var n = 0; n < thisSelf._ios[i]._connectors.length; n++) {
+						if (thisSelf._ios[i]._connectors[n].hitTest(mOff)) {
+							thisSelf._ios[i]._connectors[n].setState(Connector.STATE_HOVER);
+						} else {
+							thisSelf._ios[i]._connectors[n].setState(Connector.STATE_NORMAL);
+						}
+					}
 				}
 			}
 		});
 		if (!commonMouseUp) {
 			canvas.on('mouseup', function() {
-				if (cConn) {
+				if (cConn && (!cConn.source || !cConn.target)) {
 					var mOff = canvas.mouseEntity.getPosition();
 					for (var n = 0; n < nodes.length; n++) {
 						for (var i = 0; i < nodes[n]._ios.length; i++) {
-							if (nodes[n]._ios[i].type === NodeIO.TYPE_INPUT && nodes[n]._ios[i].hitTest(mOff) && nodes[n]._ios[i].parent !== cConn.source.parent) {
-								cConn.target = nodes[n]._ios[i];
-								cConn = null;
-								break;
+							if (!cConn.source) {
+								if (nodes[n]._ios[i].type === NodeIO.TYPE_OUTPUT && nodes[n]._ios[i].hitTest(mOff) && nodes[n]._ios[i].parent !== cConn.target.parent) {
+									cConn.target.connectFrom(nodes[n]._ios[i], cConn);
+									cConn = null;
+									break;
+								}
+							} else if (!cConn.target) {
+								if (nodes[n]._ios[i].type === NodeIO.TYPE_INPUT && nodes[n]._ios[i].hitTest(mOff) && nodes[n]._ios[i].parent !== cConn.source.parent) {
+									cConn.source.connectTo(nodes[n]._ios[i], cConn);
+									cConn = null;
+									break;
+								}
 							}
 						}
+						if (!cConn) break;
 					}
-					if (cConn && cConn.target === null) {
-						if (cConn.source) cConn.source.disconnect(cConn);
+					if (cConn && (cConn.source === null || cConn.target === null)) {
+						if (cConn.source) {
+							cConn.source.disconnect(cConn);
+						} else if (cConn.target) {
+							cConn.target.disconnect(cConn);
+						}
 						delete cConn;
 						cConn = null;
+					}
+				}
+			}).on('mousemove', function() {
+				if (cConn && cConn.source && cConn.target) {
+					if (cConn._endGrab) {
+						cConn.source.connectTo(null, cConn);
+					} else {
+						cConn.target.connectFrom(null, cConn);
 					}
 				}
 			});
