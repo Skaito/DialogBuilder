@@ -1,6 +1,6 @@
 
 var Class = require('./lang/Class');
-var Entity = require('./canvas/Entity');
+var ContainerEntity = require('./canvas/ContainerEntity');
 var Canvas2D = require('./canvas/Canvas2D');
 var Grid = require('./canvas/Grid');
 var Toolbar = require('./canvas/Toolbar');
@@ -11,47 +11,47 @@ var StatsPanel = require('./canvas/StatsPanel');
 
 'use strict';
 
-var self = Class.create(Entity, {
+var self = Class.create(ContainerEntity, {
 	
 	_width: 0,
 	_height: 0,
-	_nodes: null,
-	_uiNodes: null,
+	_surface: null,
+	_ui: null,
 	
 	_rootNode: null,
 	
 	initialize: function() {
-		Entity.prototype.initialize.call(this);
+		ContainerEntity.prototype.initialize.call(this);
 		
 		var thisSelf = this;
 		
 		Canvas2D.init();
-		this._nodes = [];
-		this._uiNodes = [];
+		this.addChild(this._surface = new ContainerEntity());
+		this.addChild(this._ui = new ContainerEntity());
 		
 		var toolbar = new Toolbar(Canvas2D);
 		toolbar.addItem(new ToolbarItem("Add Root Node", 120, 24, function() {
 			var node = new RootNode(Canvas2D, 0, 0);
-			thisSelf._nodes.push(node);
+			thisSelf._surface.addChild(node);
 			node.startDrag();
 		}));
 		toolbar.addItem(new ToolbarItem("Add Dialog Node", 120, 24, function() {
 			var node = new DialogNode(Canvas2D, 0, 0);
-			thisSelf._nodes.push(node);
+			thisSelf._surface.addChild(node);
 			node.startDrag();
 		}));
-		this._uiNodes.push(toolbar);
-		this._uiNodes.push(new StatsPanel());
+		this._ui.addChild(toolbar);
+		this._ui.addChild(new StatsPanel());
 
-		this._nodes.push(new Grid());
+		this._surface.addChild(new Grid());
 
-		this._nodes.push(this._rootNode = new RootNode(Canvas2D, 0, 0));
+		this._surface.addChild(this._rootNode = new RootNode(Canvas2D, 0, 0));
 
 		var nodeA = new DialogNode(Canvas2D, 150, 60);
-		this._nodes.push(nodeA);
+		this._surface.addChild(nodeA);
 
 		var nodeB = new DialogNode(Canvas2D, 600, 80);
-		this._nodes.push(nodeB);
+		this._surface.addChild(nodeB);
 
 		this._rootNode.getIO(0).connectTo(nodeA.getIO(0));
 		nodeA.getIO(1).connectTo(nodeB.getIO(0));
@@ -88,37 +88,14 @@ var self = Class.create(Entity, {
 		this._width = width;
 		this._height = height;
 		Canvas2D.setSize(width, height);
-		for (var i = 0; i < this._nodes.length; i++) {
-			this._nodes[i].resize(width, height);
-		}
-		for (var i = 0; i < this._uiNodes.length; i++) {
-			this._uiNodes[i].resize(width, height);
-		}
-	},
-	
-	act: function(delta) {
-		for (var i = 0; i < this._nodes.length; i++) {
-			this._nodes[i].act(delta);
-		}
-		for (var i = 0; i < this._uiNodes.length; i++) {
-			this._uiNodes[i].act(delta);
-		}
+		ContainerEntity.prototype.resize.call(this, width, height);
 	},
 	
 	render: function(ctx) {
 		//ctx.clearRect(0, 0, this._width, this._height);
 		ctx.fillStyle = "#272727";
 		ctx.fillRect(0, 0, this._width, this._height);
-		for (i = 0; i < this._nodes.length; i++) {
-			ctx.save();
-			this._nodes[i].render(ctx);
-			ctx.restore();
-		}
-		for (i = 0; i < this._uiNodes.length; i++) {
-			ctx.save();
-			this._uiNodes[i].render(ctx);
-			ctx.restore();
-		}
+		ContainerEntity.prototype.render.call(this, ctx);
 	}
 	
 });
