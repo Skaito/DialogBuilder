@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"strictNullChecks": true,
+		"allowJs": true,
+		"module": "amd",
+		"outFile": "public/js/bundle.js",
+		"sourceMap": false
+	},
+	"exclude": [
+		"public"
+	]
+}
