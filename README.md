@@ -19,7 +19,7 @@ clone this repo then call
 npm install
 ```
 ```
-gulp watch
+tsc -w
 ```
 and open public/index.html in your browser
 
