@@ -1,43 +1,39 @@
 
-var Class = require('./lang/Class');
-var ContainerEntity = require('./canvas/ContainerEntity');
-var Canvas2D = require('./canvas/Canvas2D');
-var Grid = require('./canvas/Grid');
-var Toolbar = require('./canvas/Toolbar');
-var ToolbarItem = require('./canvas/ToolbarItem');
-var RootNode = require('./canvas/RootNode');
-var DialogNode = require('./canvas/DialogNode');
-var StatsPanel = require('./canvas/StatsPanel');
+import { ContainerEntity } from './canvas/ContainerEntity';
+import { Canvas2D } from './canvas/Canvas2D';
+import { Grid } from './canvas/Grid';
+import { Toolbar } from './canvas/Toolbar';
+import { ToolbarItem } from './canvas/ToolbarItem';
+import { RootNode } from './canvas/RootNode';
+import { DialogNode } from './canvas/DialogNode';
+import { StatsPanel } from './canvas/StatsPanel';
+import { NodeIO } from './canvas/NodeIO';
 
-'use strict';
-
-var self = Class.create(ContainerEntity, {
+export class DialogBuilder extends ContainerEntity {
 	
-	_width: 0,
-	_height: 0,
-	_surface: null,
-	_ui: null,
+	private _width = 0;
+	private _height = 0;
+	private _surface: ContainerEntity;
+	private _ui: ContainerEntity;
+	private canvas: Canvas2D;
+	private _rootNode: RootNode;
 	
-	_rootNode: null,
-	
-	initialize: function() {
-		ContainerEntity.prototype.initialize.call(this);
+	constructor() {
+		super();
 		
-		var thisSelf = this;
-		
-		Canvas2D.init();
+		this.canvas = Canvas2D.init();
 		this.addChild(this._surface = new ContainerEntity());
 		this.addChild(this._ui = new ContainerEntity());
 		
-		var toolbar = new Toolbar(Canvas2D);
-		toolbar.addItem(new ToolbarItem("Add Root Node", 120, 24, function() {
-			var node = new RootNode(Canvas2D, 0, 0);
-			thisSelf._surface.addChild(node);
+		let toolbar = new Toolbar(this.canvas);
+		toolbar.addItem(new ToolbarItem("Add Root Node", 120, 24, () => {
+			let node = new RootNode(this.canvas, 0, 0);
+			this._surface.addChild(node);
 			node.startDrag();
 		}));
-		toolbar.addItem(new ToolbarItem("Add Dialog Node", 120, 24, function() {
-			var node = new DialogNode(Canvas2D, 0, 0);
-			thisSelf._surface.addChild(node);
+		toolbar.addItem(new ToolbarItem("Add Dialog Node", 120, 24, () => {
+			let node = new DialogNode(this.canvas, 0, 0);
+			this._surface.addChild(node);
 			node.startDrag();
 		}));
 		this._ui.addChild(toolbar);
@@ -45,24 +41,24 @@ var self = Class.create(ContainerEntity, {
 
 		this._surface.addChild(new Grid());
 
-		this._surface.addChild(this._rootNode = new RootNode(Canvas2D, 0, 0));
+		this._surface.addChild(this._rootNode = new RootNode(this.canvas, 0, 0));
 
-		var nodeA = new DialogNode(Canvas2D, 150, 60);
+		var nodeA = new DialogNode(this.canvas, 150, 60);
 		this._surface.addChild(nodeA);
 
-		var nodeB = new DialogNode(Canvas2D, 600, 80);
+		var nodeB = new DialogNode(this.canvas, 600, 80);
 		this._surface.addChild(nodeB);
 
-		this._rootNode.getIO(0).connectTo(nodeA.getIO(0));
-		nodeA.getIO(1).connectTo(nodeB.getIO(0));
-	},
+		(this._rootNode.getIO(0) as NodeIO).connectTo(nodeA.getIO(0));
+		(nodeA.getIO(1) as NodeIO).connectTo(nodeB.getIO(0));
+	}
 	
-	start: function() {
-		var renderFrame, resizeFunc, thisSelf = this, lastTick = (new Date()).getTime();
+	start() {
+		let renderFrame: () => void, resizeFunc, thisSelf = this, lastTick = (new Date()).getTime();
 		if (document.body.firstChild) {
-			document.body.insertBefore(Canvas2D.getElem(), document.body.firstChild);
+			document.body.insertBefore(this.canvas.getElem(), document.body.firstChild);
 		} else {
-			document.body.appendChild(Canvas2D.getElem());
+			document.body.appendChild(this.canvas.getElem());
 		}
 		
 		window.addEventListener('resize', resizeFunc = function() {
@@ -73,31 +69,31 @@ var self = Class.create(ContainerEntity, {
 		this._rootNode.setPosition(10, (this._height - this._rootNode.getSize().height) / 2);
 		
 		if (!('requestAnimationFrame' in window)) {
-			window.requestAnimationFrame = (window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame);
+			window.requestAnimationFrame = (window.webkitRequestAnimationFrame
+				|| (window as any).mozRequestAnimationFrame
+				|| (window as any).oRequestAnimationFrame
+				|| (window as any).msRequestAnimationFrame);
 		}
-		window.requestAnimationFrame(renderFrame = function() {
+		window.requestAnimationFrame(renderFrame = () => {
 			var tick = (new Date()).getTime(), delta = tick - lastTick;
 			lastTick = tick;
-			thisSelf.act(delta);
-			thisSelf.render(Canvas2D.ctx);
+			this.act(delta);
+			if (this.canvas.ctx) this.render(this.canvas.ctx);
 			window.requestAnimationFrame(renderFrame);
 		});
-	},
+	}
 
-	resize: function(width, height) {
+	resize(width: number, height: number) {
 		this._width = width;
 		this._height = height;
-		Canvas2D.setSize(width, height);
-		ContainerEntity.prototype.resize.call(this, width, height);
-	},
-	
-	render: function(ctx) {
-		//ctx.clearRect(0, 0, this._width, this._height);
-		ctx.fillStyle = "#272727";
-		ctx.fillRect(0, 0, this._width, this._height);
-		ContainerEntity.prototype.render.call(this, ctx);
+		this.canvas.setSize(width, height);
+		super.resize(width, height);
 	}
 	
-});
-
-module.exports = self;
+	render(ctx: CanvasRenderingContext2D) {
+		ctx.fillStyle = "#272727";
+		ctx.fillRect(0, 0, this._width, this._height);
+		super.render(ctx);
+	}
+	
+}

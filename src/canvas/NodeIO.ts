@@ -1,70 +1,50 @@
 
-var Class = require('../lang/Class');
-var Panel = require('./Panel');
-var Connector = require('./Connector');
+import { Panel } from './Panel';
+import { Canvas2D } from './Canvas2D';
+import { MouseEntity } from './MouseEntity';
+import { Node } from './Node';
+import { Connector } from './Connector';
+import { Point } from '../math/Point';
 
-'use strict';
-
-var self = Class.create(Panel, {
-
-	__static__: {
-		TYPE_INPUT: 1,
-		TYPE_OUTPUT: 2,
-		STATE_NORMAL: 0,
-		STATE_HOVER: 1
-	},
-
-	type: 0,
-	parent: null,
-	_state: null,
-	_defBgColor: null,
-	_hoverBgColor: null,
-	_roundness: 6,
-	/** @type Connector[] */
-	_connectors: null,
-	_mouseEntity: null,
-
-	/**
-	 * @param {Canvas2D} canvas
-	 * @param {Number} type
-	 * @param {DialogNode} parent
-	 * @returns {NodeIO}
-	 */
-	initialize: function(canvas, type, parent) {
-		Panel.prototype.initialize.call(this, 0, 0, 11, 16);
-		this.type = type;
-		if (parent) this.parent = parent;
-		this._connectors = [];
+export class NodeIO extends Panel {
+	
+	static readonly TYPE_INPUT = 1;
+	static readonly TYPE_OUTPUT = 2;
+	static readonly STATE_NORMAL = 0;
+	static readonly STATE_HOVER = 1;
+	
+	private _state = NodeIO.STATE_NORMAL;
+	private _defBgColor = '#373737';
+	private _hoverBgColor = '#444444';
+	private _roundness = 6;
+	_connectors: Connector[] = [];
+	private _mouseEntity: MouseEntity;
+	
+	constructor(canvas: Canvas2D, public type: number, public parent: Node|null = null) {
+		super(0, 0, 11, 16);
 		this._mouseEntity = canvas.mouseEntity;
-		this._state = self.STATE_NORMAL;
-		this._backgroundColor = this._defBgColor = '#373737';
-		this._hoverBgColor = '#444444';
-	},
+		this._backgroundColor = this._defBgColor;
+	}
 
-	hitTest: function(p) {
+	hitTest(p: Point) {
 		if (!p) return false;
-		var halfH = this._height / 2, x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-		if (this.type === self.TYPE_OUTPUT) {
-			x1 = this._x - (this._width - halfH),
-			y1 = this._y - halfH,
-			x2 = this._x + halfH,
-			y2 = this._y + halfH;
-		} else if (this.type === self.TYPE_INPUT) {
-			x2 = this._x + (this._width - halfH),
-			y2 = this._y + halfH,
-			x1 = this._x - halfH,
-			y1 = this._y - halfH;
+		var halfH = this.height / 2, x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+		if (this.type === NodeIO.TYPE_OUTPUT) {
+			x1 = this.x - (this.width - halfH),
+			y1 = this.y - halfH,
+			x2 = this.x + halfH,
+			y2 = this.y + halfH;
+		} else if (this.type === NodeIO.TYPE_INPUT) {
+			x2 = this.x + (this.width - halfH),
+			y2 = this.y + halfH,
+			x1 = this.x - halfH,
+			y1 = this.y - halfH;
 		}
 		//console.log('Hit: ' + p.x + "x" + p.y + " :: " + x1 + "x" + y1 + ", " + x2 + "x" + y2);
 		return (p.x >= x1 && p.x <= x2 && p.y >= y1 && p.y <= y2);
-	},
-
-	/**
-	 * @param {NodeIO} inputIO
-	 * @param {Connector} conn
-	 * @returns {Connector}
-	 */
-	connectTo: function(inputIO, conn) {
+	}
+	
+	connectTo(inputIO: NodeIO|null, conn: Connector|null = null): Connector {
 		if (!conn) {
 			conn = new Connector();
 		} else {
@@ -76,14 +56,9 @@ var self = Class.create(Panel, {
 		conn.defaultTarget = this._mouseEntity;
 		this._connectors.push(conn);
 		return conn;
-	},
+	}
 	
-	/**
-	 * @param {NodeIO} inputIO
-	 * @param {Connector} conn
-	 * @returns {Connector}
-	 */
-	connectFrom: function(inputIO, conn) {
+	connectFrom(inputIO: NodeIO|null, conn: Connector): Connector {
 		if (!conn) {
 			conn = new Connector();
 		} else {
@@ -95,70 +70,61 @@ var self = Class.create(Panel, {
 		conn.defaultTarget = this._mouseEntity;
 		this._connectors.push(conn);
 		return conn;
-	},
-
-	/** @param {Connector} conn */
-	disconnect: function(conn) {
+	}
+	
+	disconnect(conn: Connector) {
 		var idx = this._connectors.indexOf(conn);
 		if (idx >= 0) this._connectors.splice(idx, 1);
-	},
+	}
 
-	setState: function(state) {
-		this._state = state;
-	},
+	setState(state: number) { this._state = state; }
 
-	getState: function() {
-		return this._state;
-	},
+	getState() { return this._state; }
+	
+	act(delta: number) {
+		super.act(delta);
+		for (let conn of this._connectors) { conn.act(delta); }
+		this.setBackgroundColor(((this._state === NodeIO.STATE_HOVER) ? this._hoverBgColor : this._defBgColor));
+	}
 
-	act: function(delta) {
-		Panel.prototype.act.call(this, delta);
-		for (var i = 0; i < this._connectors.length; i++) {
-			this._connectors[i].act(delta);
-		}
-		this.setBackgroundColor(((this._state === self.STATE_HOVER) ? this._hoverBgColor : this._defBgColor));
-	},
-
-	render: function(ctx) {
-		for (var i = 0; i < this._connectors.length; i++) {
+	render(ctx: CanvasRenderingContext2D) {
+		for (let conn of this._connectors) {
 			ctx.save();
-			this._connectors[i].render(ctx);
+			conn.render(ctx);
 			ctx.restore();
 		}
-		var halfH = this._height / 2, x = this._x + 0.5, y = this._y + 0.5;
+		var halfH = this.height / 2, x = this.x + 0.5, y = this.y + 0.5;
 		ctx.beginPath();
-		if (this.type === self.TYPE_OUTPUT) {
-			ctx.moveTo(x - (this._width - halfH), y - halfH);
+		if (this.type === NodeIO.TYPE_OUTPUT) {
+			ctx.moveTo(x - (this.width - halfH), y - halfH);
 			ctx.lineTo(x + (halfH - this._roundness), y - halfH);
 			ctx.arc(x + (halfH - this._roundness), y - halfH + this._roundness, this._roundness, -0.5 * Math.PI, 0);
 			ctx.lineTo(x + halfH, y + halfH - this._roundness);
 			ctx.arc(x + (halfH - this._roundness), y + halfH - this._roundness, this._roundness, 0, 0.5 * Math.PI);
-			ctx.lineTo(x - (this._width - halfH), y + halfH);
-		} else if (this.type === self.TYPE_INPUT) {
-			ctx.moveTo(x + (this._width - halfH), y - halfH);
+			ctx.lineTo(x - (this.width - halfH), y + halfH);
+		} else if (this.type === NodeIO.TYPE_INPUT) {
+			ctx.moveTo(x + (this.width - halfH), y - halfH);
 			ctx.lineTo(x - (halfH - this._roundness), y - halfH);
 			ctx.arc(x - (halfH - this._roundness), y - halfH + this._roundness, this._roundness, -0.5 * Math.PI, -Math.PI, true);
 			ctx.lineTo(x - halfH, y + halfH - this._roundness);
 			ctx.arc(x - (halfH - this._roundness), y + halfH - this._roundness, this._roundness, -Math.PI, 0.5 * Math.PI, true);
-			ctx.lineTo(x + (this._width - halfH), y + halfH);
+			ctx.lineTo(x + (this.width - halfH), y + halfH);
 		}
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = '#656565';
 		ctx.fillStyle = this._backgroundColor;
 		ctx.fill();
 		ctx.stroke();
-	},
+	}
 	
-	destroy: function() {
-		var i, c;
+	destroy() {
+		let i, c;
 		for (i = (this._connectors.length - 1); i >= 0; i--) {
 			c = this._connectors[i];
 			this.disconnect(c);
 			c.destroy();
 		}
-		Panel.prototype.destroy.call(this);
+		super.destroy();
 	}
 
-});
-
-module.exports = self;
+}

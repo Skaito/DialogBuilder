@@ -1,29 +1,24 @@
 
-var Class = require('../lang/Class');
-var Panel = require('./Panel');
-var Canvas2D = require('./Canvas2D');
+import { Panel } from './Panel';
+import { Canvas2D } from './Canvas2D';
 
-'use strict';
-
-var self = Class.create(Panel, {
+export class RaisedPanel extends Panel {
 	
-	initialize: function(x, y, width, height) {
-		Panel.prototype.initialize.call(this, x, y, width, height);
+	constructor(x: number, y: number, width: number, height: number) {
+		super(x, y, width, height);
 		this._backgroundColor = '#474747';
-	},
+	}
 	
-	render: function(ctx) {
+	render(ctx: CanvasRenderingContext2D) {
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = '#292929';
 		ctx.fillStyle = this._backgroundColor;
-		Canvas2D.roundRect(ctx, this._x + 0.5, this._y + 0.5, this._width, this._height, 3, true, true);
+		Canvas2D.roundRect(ctx, this.x + 0.5, this.y + 0.5, this.width, this.height, 3, true, true);
 		ctx.strokeStyle = '#656565';
 		ctx.beginPath();
-		ctx.moveTo(this._x + 2.5, this._y + 1.5);
-		ctx.lineTo(this._x + this._width - 3, this._y + 1.5);
+		ctx.moveTo(this.x + 2.5, this.y + 1.5);
+		ctx.lineTo(this.x + this.width - 3, this.y + 1.5);
 		ctx.stroke();
 	}
 	
-});
-
-module.exports = self;
+}

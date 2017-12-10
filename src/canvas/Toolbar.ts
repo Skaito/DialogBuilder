@@ -1,86 +1,79 @@
 
-var Class = require('../lang/Class');
-var Entity = require('./Entity');
-var ToolbarItem = require('./ToolbarItem');
-var Panel = require('./Panel');
+import { Entity } from './Entity';
+import { Canvas2D } from './Canvas2D';
+import { ToolbarItem } from './ToolbarItem';
+import { Panel } from './Panel';
 
-'use strict';
+export class Toolbar extends Entity {
 
-var self = Class.create(Entity, {
+	private _width = 0;
+	private _height = 40;
+	private _items: ToolbarItem[] = [];
+	private _basePanel: Panel;
 
-	_width: 0,
-	_height: 40,
-	_items: null,
-	_basePanel: null,
-
-	initialize: function(canvas) {
-		Entity.prototype.initialize.call(this);
-		this._items = [];
-		var thisSelf = this;
-		canvas.on('click', function() {
+	constructor(canvas: Canvas2D) {
+		super();
+		canvas.on('click', () => {
 			var mOff = canvas.mouseEntity.getPosition();
-			for (var i = 0; i < thisSelf._items.length; i++) {
-				if (thisSelf._items[i].hitTest(mOff)) {
-					if (typeof thisSelf._items[i].clickAction === 'function') thisSelf._items[i].clickAction();
+			for (let item of this._items) {
+				if (item.hitTest(mOff)) {
+					if (typeof item.clickAction === 'function') item.clickAction();
 				}
 			}
-		}).on('mousemove', function() {
+		}).on('mousemove', () => {
 			var mOff = canvas.mouseEntity.getPosition();	
-			for (var i = 0; i < thisSelf._items.length; i++) {
-				if (thisSelf._items[i].hitTest(mOff)) {
-					thisSelf._items[i].setState(ToolbarItem.STATE_HOVER);
+			for (let item of this._items) {
+				if (item.hitTest(mOff)) {
+					item.setState(ToolbarItem.STATE_HOVER);
 				} else {
-					thisSelf._items[i].setState(ToolbarItem.STATE_NORMAL);
+					item.setState(ToolbarItem.STATE_NORMAL);
 				}
 			}
 		});
 		this._basePanel = new Panel(0, 0, this._width, this._height);
-	},
+	}
 
-	addItem: function(item) {
+	addItem(item: ToolbarItem) {
 		this._items.push(item);
-	},
+	}
 
-	resize: function(width, height) {
+	resize(width: number, height: number) {
 		this._width = width;
-	},
+	}
 
-	act: function(delta) {
-		var px = 10, sp = 10;
-		for (var i = 0; i < this._items.length; i++) {
-			this._items[i]._x = px;
-			this._items[i]._y = (this._height - this._items[i]._height) / 2;
-			this._items[i].act(delta);
-			px += this._items[i]._width + sp;
+	act(delta: number) {
+		let px = 10, sp = 10;
+		for (let item of this._items) {
+			let size = item.getSize();
+			item.setPosition(px, (this._height - size.height) / 2);
+			item.act(delta);
+			px += size.width + sp;
 		}
 		this._basePanel.setPosition(-5, -5);
 		this._basePanel.setSize(this._width + 10, this._height + 5);
-	},
+	}
 
-	render: function(ctx) {
+	render(ctx: CanvasRenderingContext2D) {
 		if (this._width > 0) {
 			ctx.save();
 			this._basePanel.render(ctx);
 			ctx.restore();
 
-			for (var i = 0; i < this._items.length; i++) {
+			for (let item of this._items) {
 				ctx.save();
-				this._items[i].render(ctx);
+				item.render(ctx);
 				ctx.restore();
 			}
 		}
-	},
+	}
 	
-	destroy: function() {
-		for (var i = 0; i < this._items.length; i++) {
-			this._items[i].destroy();
+	destroy() {
+		for (let item of this._items) {
+			item.destroy();
 		}
 		this._items.splice(0, this._items.length);
 		this._basePanel.destroy();
-		this._basePanel = null;
-		Entity.prototype.destroy.call(this);
+		super.destroy();
 	}
 
-});
-
-module.exports = self;
+}

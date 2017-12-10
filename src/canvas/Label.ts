@@ -1,86 +1,61 @@
 
-var Class = require('../lang/Class');
-var Panel = require('./Panel');
+import { Panel } from './Panel';
 
-'use strict';
+export class Label extends Panel {
+	
+	static readonly ALIGN_LEFT = 'left';
+	static readonly ALIGN_CENTER = 'center';
+	static readonly ALIGN_RIGHT = 'right';
+	static readonly ALIGN_TOP = 'top';
+	static readonly ALIGN_MIDDLE = 'middle';
+	static readonly ALIGN_BOTTOM = 'bottom';
 
-var self = Class.create(Panel, {
+	private _font = '12px arial';
+	private _color = '#ffffff';
+	private _vAlign = Label.ALIGN_TOP;
+	private _hAlign = Label.ALIGN_LEFT;
 	
-	__static__: {
-		ALIGN_LEFT: 'left',
-		ALIGN_CENTER: 'center',
-		ALIGN_RIGHT: 'right',
-		ALIGN_TOP: 'top',
-		ALIGN_MIDDLE: 'middle',
-		ALIGN_BOTTOM: 'bottom'
-	},
-
-	_font: '12px arial',
-	_color: '#ffffff',
-	_text: null,
-	_vAlign: null,
-	_hAlign: null,
-	
-	initialize: function(text, x, y, width, height) {
-		Panel.prototype.initialize.call(this, x, y, width, height);
-		this._text = text;
-		this._vAlign = self.ALIGN_TOP;
-		this._hAlign = self.ALIGN_LEFT;
-	},
-	
-	setFont: function(font) {
-		this._font = font;
-	},
-	
-	setColor: function(color) {
-		this._color = color;
-	},
-	
-	setText: function(text) {
-		this._text = text;
-	},
-	
-	getText: function() {
-		return this._text;
-	},
-	
-	setVerticalAlignment: function(align) {
-		this._vAlign = align;
-	},
-	
-	setHorizontalAlignment: function(align) {
-		this._hAlign = align;
-	},
-	
-	render: function(ctx) {
-		if (typeof this._text === 'string' || typeof this._text === 'number') {
-			//ctx.fillStyle = "#000000"; ctx.fillRect(this._x, this._y, this._width, this._height);
-			ctx.fillStyle = this._color;
-			ctx.font = this._font;
-			//var tm = ctx.measureText(this._text);
-			var x = this._x, y = this._y;
-			if (this._vAlign === self.ALIGN_BOTTOM) {
-				y = this._y + this._height;
-				ctx.textBaseline = 'bototm';
-			} else if (this._vAlign === self.ALIGN_MIDDLE || this._vAlign === self.ALIGN_CENTER) {
-				y = this._y + (this._height / 2);
-				ctx.textBaseline = 'middle';
-			} else {
-				ctx.textBaseline = 'top';
-			}
-			if (this._hAlign === self.ALIGN_RIGHT) {
-				x = this._x + this._width;
-				ctx.textAlign = 'bottom';
-			} else if (this._hAlign === self.ALIGN_CENTER || this._hAlign === self.ALIGN_MIDDLE) {
-				x = this._x + (this._width / 2);
-				ctx.textAlign = 'center';
-			} else {
-				ctx.textAlign = 'left';
-			}
-			ctx.fillText(this._text, x, y);
-		}
+	constructor(private _text: string, x: number, y: number, width: number, height: number) {
+		super(x, y, width, height);
 	}
 	
-});
-
-module.exports = self;
+	setFont(font: string) { this._font = font; }
+	
+	setColor(color: string) { this._color = color; }
+	
+	setText(text: string) { this._text = text; }
+	
+	getText() { return this._text; }
+	
+	setVerticalAlignment(align: string) { this._vAlign = align; }
+	
+	setHorizontalAlignment(align: string) { this._hAlign = align; }
+	
+	render(ctx: CanvasRenderingContext2D) {
+		//ctx.fillStyle = "#000000"; ctx.fillRect(this._x, this._y, this._width, this._height);
+		ctx.fillStyle = this._color;
+		ctx.font = this._font;
+		//var tm = ctx.measureText(this._text);
+		var x = this.x, y = this.y;
+		if (this._vAlign === Label.ALIGN_BOTTOM) {
+			y = this.y + this.height;
+			ctx.textBaseline = 'bototm';
+		} else if (this._vAlign === Label.ALIGN_MIDDLE || this._vAlign === Label.ALIGN_CENTER) {
+			y = this.y + (this.height / 2);
+			ctx.textBaseline = 'middle';
+		} else {
+			ctx.textBaseline = 'top';
+		}
+		if (this._hAlign === Label.ALIGN_RIGHT) {
+			x = this.x + this.width;
+			ctx.textAlign = 'bottom';
+		} else if (this._hAlign === Label.ALIGN_CENTER || this._hAlign === Label.ALIGN_MIDDLE) {
+			x = this.x + (this.width / 2);
+			ctx.textAlign = 'center';
+		} else {
+			ctx.textAlign = 'left';
+		}
+		ctx.fillText(this._text, x, y);
+	}
+	
+}

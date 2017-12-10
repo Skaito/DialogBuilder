@@ -1,29 +1,23 @@
 
-var Class = require('../lang/Class');
-var Panel = require('./Panel');
-var Canvas2D = require('./Canvas2D');
+import { Panel } from './Panel';
+import { Canvas2D } from './Canvas2D';
 
-'use strict';
-
-var self = Class.create(Panel, {
+export class LoweredPanel extends Panel {
 	
-	initialize: function(x, y, width, height) {
-		Panel.prototype.initialize.call(this, x, y, width, height);
+	constructor(x: number, y: number, width: number, height: number) {
+		super(x, y, width, height);
 		this._backgroundColor = '#373737';
-		return this;
-	},
-	
-	render: function(ctx) {
-		ctx.lineWidth = 1;
-		ctx.strokeStyle = '#616161';
-		Canvas2D.roundRect(ctx, this._x + 0.5, this._y + 1.5, this._width, this._height - 1, 3, false, true);
-		ctx.strokeStyle = '#202020';
-		Canvas2D.roundRect(ctx, this._x + 0.5, this._y + 0.5, this._width, this._height - 1, 3, false, true);
-		ctx.fillStyle = this._backgroundColor;
-		ctx.strokeStyle = '#2b2b2b';
-		Canvas2D.roundRect(ctx, this._x + 0.5, this._y + 1.5, this._width, this._height - 2, 3, true, true);
 	}
 	
-});
-
-module.exports = self;
+	render(ctx: CanvasRenderingContext2D) {
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = '#616161';
+		Canvas2D.roundRect(ctx, this.x + 0.5, this.y + 1.5, this.width, this.height - 1, 3, false, true);
+		ctx.strokeStyle = '#202020';
+		Canvas2D.roundRect(ctx, this.x + 0.5, this.y + 0.5, this.width, this.height - 1, 3, false, true);
+		ctx.fillStyle = this._backgroundColor;
+		ctx.strokeStyle = '#2b2b2b';
+		Canvas2D.roundRect(ctx, this.x + 0.5, this.y + 1.5, this.width, this.height - 2, 3, true, true);
+	}
+	
+}

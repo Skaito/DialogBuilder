@@ -1,90 +1,68 @@
 
-var Class = require('../lang/Class');
-var Point = require('../math/Point');
-var Entity = require('./Entity');
+import { Point } from '../math/Point';
+import { Entity } from './Entity';
+import { Positionable } from './Positionable';
+import { NodeIO } from './NodeIO';
 
-'use strict';
-
-var self = Class.create(Entity, {
+export class Connector extends Entity {
 	
-	__static__: {
-		STATE_NORMAL: 0,
-		STATE_HOVER: 1
-	},
+	static readonly STATE_NORMAL = 0;
+	static readonly STATE_HOVER = 1;
 	
-	/** @type NodeIO */
-	source: null,
-	/** @type NodeIO */
-	target: null,
-	defaultTarget: null,
-	_pS: null,
-	_pT: null,
-	_pA: null,
-	_rot: 0,
-	_state: null,
-	_endGrab: true,
-
-	initialize: function() {
-		Entity.prototype.initialize.call(this);
-		this._state = self.STATE_NORMAL;
-		this._pS = new Point(0, 0);
-		this._pT = new Point(0, 0);
-		this._pA = [{x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}];
-	},
+	source: NodeIO|null = null;
+	target: NodeIO|null = null;
+	defaultTarget: Positionable|null = null;
+	private _pS = new Point(0, 0);
+	private _pT = new Point(0, 0);
+	private _pA = [{x: 0, y: 0}, {x: 0, y: 0}, {x: 0, y: 0}];
+	private _rot = 0;
+	private _state = Connector.STATE_NORMAL;
+	_endGrab = true;
 	
-	/**
-	 * Set state on of STATE_* constants
-	 * @param {Number} state
-	 */
-	setState: function(state) {
-		this._state = state;
-	},
+	/** Set state on of STATE_* constants */
+	setState(state: number) { this._state = state; }
 	
-	/**
-	 * Test collision with point p
-	 * @param {Point} p
-	 * @return {Boolean}
-	 */
-	hitTest: function(p) {
-		var d0 = this._pS.distance(this._pT),
+	/** Test collision with point p */
+	hitTest(p: Point) {
+		let d0 = this._pS.distance(this._pT),
 			d1 = this._pS.distance(p),
 			d2 = this._pT.distance(p);
 		if (d1 < d0 && d2 < d0 && ((d1 + d2) - d0) < 0.08) {
 			return true;
 		}
 		return false;
-	},
+	}
 
-	act: function(delta) {
-		if (this.source && this.target && this._state === self.STATE_HOVER) {
-			var p = this.defaultTarget.getPosition(),
+	act(delta: number) {
+		if (this.source && this.target && this._state === Connector.STATE_HOVER) {
+			let p = this.defaultTarget ? this.defaultTarget.getPosition() : new Point(0, 0),
 			d1 = this._pS.distance(p),
 			d2 = this._pT.distance(p);
 			this._endGrab = (d1 >= d2);
 		}
 		if (this.source) {
-			var pos = this.source.getPosition();
+			let pos = this.source.getPosition();
 			this._pS.x = pos.x;
 			this._pS.y = pos.y;
 		} else if (this.target && this.defaultTarget) {
-			var pos = this.defaultTarget.getPosition();
+			let pos = this.defaultTarget.getPosition();
 			this._pS.x = pos.x;
 			this._pS.y = pos.y;
 		} else {
 			this._pS.x = this._pS.y = 0;
 		}
 		if (this.target) {
-			var pos = this.target.getPosition();
+			let pos = this.target.getPosition();
 			this._pT.x = pos.x;
 			this._pT.y = pos.y;
 		} else if (this.defaultTarget) {
-			var pos = this.defaultTarget.getPosition();
+			let pos = this.defaultTarget.getPosition();
 			this._pT.x = pos.x;
 			this._pT.y = pos.y;
 		} else {
 			this._pT.x = this._pT.y = 0;
 		}
-		var a = this._pS.x - this._pT.x,
+		let a = this._pS.x - this._pT.x,
 			b = this._pS.y - this._pT.y,
 			c = Math.sqrt(a*a + b*b),
 			r = -Math.asin(b / c);
@@ -109,7 +87,7 @@ var self = Class.create(Entity, {
 			this._pT.x += (Math.cos(r) * 5);
 			this._pT.y += (Math.sin(r) * 5);
 		}
-		var hs = 9, hr = 9, rl = this._rot - (Math.PI * (hr - 1) / hr), rr = this._rot - (Math.PI * (hr + 1) / hr);
+		let hs = 9, hr = 9, rl = this._rot - (Math.PI * (hr - 1) / hr), rr = this._rot - (Math.PI * (hr + 1) / hr);
 		this._pA[0].x = this._pT.x + (Math.cos(this._rot) * 5);
 		this._pA[0].y = this._pT.y + (Math.sin(this._rot) * 5);
 		this._pA[1].x = this._pA[0].x + (Math.cos(rl) * hs);
@@ -117,11 +95,11 @@ var self = Class.create(Entity, {
 		this._pA[2].x = this._pA[0].x + (Math.cos(rr) * hs);
 		this._pA[2].y = this._pA[0].y + (Math.sin(rr) * hs);
 
-	},
+	}
 
-	render: function(ctx) {	
+	render(ctx: CanvasRenderingContext2D) {	
 		if ((this.source && (this.target || this.defaultTarget)) || (this.target && (this.source || this.defaultTarget))) {
-			if (this._state === self.STATE_HOVER) {
+			if (this._state === Connector.STATE_HOVER) {
 				ctx.shadowColor = '#ffffff';
 				//ctx.shadowColor = 'yellow';
 				//ctx.shadowOffsetY = 10;
@@ -149,8 +127,8 @@ var self = Class.create(Entity, {
 			ctx.lineTo(this._pA[0].x, this._pA[0].y);
 			ctx.fill();
 			
-			if (this._state === self.STATE_HOVER) {
-				var p = this._endGrab ? this._pT : this._pS;
+			if (this._state === Connector.STATE_HOVER) {
+				let p = this._endGrab ? this._pT : this._pS;
 				if (this._endGrab) {
 					p.x += (Math.cos(this._rot) * 6);
 					p.y += (Math.sin(this._rot) * 6);
@@ -173,6 +151,4 @@ var self = Class.create(Entity, {
 		}
 	}
 
-});
-
-module.exports = self;
+}

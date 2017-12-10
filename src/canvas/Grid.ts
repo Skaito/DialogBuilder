@@ -1,47 +1,33 @@
 
-var Class = require('../lang/Class');
-var Entity = require('./Entity');
+import { Entity } from './Entity';
 
-'use strict';
-
-var self = Class.create(Entity, {
+export class Grid extends Entity {
 	
-	_width: 0,
-	_height: 0,
-	_size: 20,
-	_delta: 0,
+	private width = 0;
+	private height = 0;
+	private size = 20;
 	
-	initialize: function() {
-		Entity.prototype.initialize.call(this);
-	},
+	resize(width: number, height: number) {
+		this.width = width;
+		this.height = height;
+	}
 	
-	resize: function(width, height) {
-		this._width = width;
-		this._height = height;
-	},
-	
-	act: function(delta) {
-		this._delta = delta;
-	},
-	
-	render: function(ctx) {
-		var x, y;
+	render(ctx: CanvasRenderingContext2D) {
+		let x, y;
 		ctx.beginPath();
-		for (y = 0.5; y < this._height; y += this._size) {
+		for (y = 0.5; y < this.height; y += this.size) {
 			if (y === 0) continue;
 			ctx.moveTo(0, y);
-			ctx.lineTo(this._width, y);
+			ctx.lineTo(this.width, y);
 		}
-		for (x = 0.5; x < this._width; x += this._size) {
+		for (x = 0.5; x < this.width; x += this.size) {
 			if (x === 0) continue;
 			ctx.moveTo(x, 0);
-			ctx.lineTo(x, this._height);
+			ctx.lineTo(x, this.height);
 		}
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "#464646";
 		ctx.stroke();
 	}
 	
-});
-
-module.exports = self;
+}

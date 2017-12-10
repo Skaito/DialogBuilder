@@ -1,29 +1,20 @@
 
-var Class = require('../lang/Class');
-var Entity = require('./Entity');
-var Point = require('../math/Point');
+import { Entity } from './Entity';
+import { Positionable } from './Positionable';
+import { Point } from '../math/Point';
 
-'use strict';
-
-var self = Class.create(Entity, {
-
-	_x: 0,
-	_y: 0,
+export class MouseEntity extends Entity implements Positionable {
 	
-	/**
-	 * @param {Number} x
-	 * @param {Number} y
-	 */
-	setPosition: function(x, y) {
-		this._x = x;
-		this._y = y;
-	},
+	private x = 0;
+	private y = 0;
 	
-	/** @return {Point} */
-	getPosition: function() {
-		return new Point(this._x, this._y);
+	setPosition(x: number, y: number) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	getPosition(): Point {
+		return new Point(this.x, this.y);
 	}
 
-});
-
-module.exports = self;
+}

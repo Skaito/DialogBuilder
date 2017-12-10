@@ -1,22 +1,14 @@
 
-var Class = require('../lang/Class');
+export class Entity {
+	
+	_parent: Entity|null = null;
+	
+	resize(width: number, height: number): void {};
+	
+	act(delta: number): void {};
+	
+	render(ctx: CanvasRenderingContext2D): void {};
+	
+	destroy(): void {};
 
-'use strict';
-
-var self = Class.create({
-	
-	_parent: null,
-	
-	initialize: function() {},
-	
-	resize: function(width, height) {},
-	
-	act: function(delta) {},
-	
-	render: function(ctx) {},
-	
-	destroy: function() {}
-
-});
-
-module.exports = self;
+};

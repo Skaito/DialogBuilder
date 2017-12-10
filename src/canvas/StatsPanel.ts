@@ -1,27 +1,18 @@
 
-var Class = require('../lang/Class');
-var Entity = require('./Entity');
+import { Entity } from './Entity';
 
-'use strict';
+export class StatsPanel extends Entity {
 
-var self = Class.create(Entity, {
+	private _delta = 0;
 
-	_delta: 0,
-
-	initialize: function() {
-		Entity.prototype.initialize.call(this);
-	},
-
-	act: function(delta) {
+	act(delta: number) {
 		this._delta = delta;
-	},
+	}
 
-	render: function(ctx) {
+	render(ctx: CanvasRenderingContext2D) {
 		ctx.fillStyle = "#ffffff";
 		ctx.font = "18px arial";
 		ctx.fillText("FPS: " + (Math.round(100000 / this._delta) / 100), 10, 68);
 	}
 
-});
-
-module.exports = self;
+}

@@ -1,71 +1,51 @@
 
-var Class = require('../lang/Class');
-var Entity = require('./Entity');
+import { Entity } from './Entity';
 
-'use strict';
-
-var self = Class.create(Entity, {
+export class ContainerEntity extends Entity {
 	
-	_children: null,
+	private _children: Entity[] = [];
 	
-	initialize: function() {
-		Entity.prototype.initialize.call(this);
-		this._children = [];
-	},
-	
-	/**
-	 * @param {Entity} child
-	 */
-	addChild: function(child) {
+	addChild(child: Entity) {
 		var idx = this._children.indexOf(child);
 		if (idx < 0) {
 			this._children.push(child);
 			child._parent = this;
 		}
-	},
+	}
 	
-	/**
-	 * @param {Entity} child
-	 */
-	removeChild: function(child) {
+	removeChild(child: Entity) {
 		var idx = this._children.indexOf(child);
 		if (idx >= 0) {
-			this._children.splce(idx, 1);
+			this._children.splice(idx, 1);
 			child._parent = null;
 		}
-	},
+	}
 	
-	resize: function(width, height) {
-		var i;
-		for (i = 0; i < this._children.length; i++) {
-			this._children[i].resize(width, height);
+	resize(width: number, height: number) {
+		for (let child of this._children) {
+			child.resize(width, height);
 		}
-	},
+	}
 	
-	act: function(delta) {
-		var i;
-		for (i = 0; i < this._children.length; i++) {
-			this._children[i].act(delta);
+	act(delta: number) {
+		for (let child of this._children) {
+			child.act(delta);
 		}
-	},
+	}
 	
-	render: function(ctx) {
-		var i;
-		for (i = 0; i < this._children.length; i++) {
+	render(ctx: CanvasRenderingContext2D) {
+		for (let child of this._children) {
 			ctx.save();
-			this._children[i].render(ctx);
+			child.render(ctx);
 			ctx.restore();
 		}
-	},
+	}
 	
-	destroy: function() {
-		var i;
-		for (i = 0; i < this._children.length; i++) {
-			this._children[i].destroy();
+	destroy() {
+		for (let child of this._children) {
+			child.destroy();
 		}
 		this._children.splice(0, this._children.length);
 	}
 
-});
-
-module.exports = self;
+}

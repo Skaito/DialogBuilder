@@ -1,7 +1,5 @@
 
-var DialogBuilder = require('./DialogBuilder');
+import { DialogBuilder } from './DialogBuilder';
 
-'use strict';
-
-var app = new DialogBuilder();
+let app = new DialogBuilder();
 app.start();

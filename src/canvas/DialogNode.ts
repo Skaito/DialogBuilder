@@ -1,63 +1,53 @@
 
-var Class = require('../lang/Class');
-var Node = require('./Node');
-var NodeIO = require('./NodeIO');
-var LoweredPanel = require('./LoweredPanel');
-var Label = require('./Label');
-
-'use strict';
+import { Node } from './Node';
+import { NodeIO } from './NodeIO';
+import { LoweredPanel } from './LoweredPanel';
+import { Label } from './Label';
+import { Canvas2D } from './Canvas2D';
 
 var dlgIndex = 0;
 
-var self = Class.create(Node, {
+export class DialogNode extends Node {
 
-	_textPanel: null,
-	_titleLabel: null,
+	private _textPanel: LoweredPanel;
+	private _titleLabel: Label;
 
-	initialize: function(canvas, x, y) {
-		Node.prototype.initialize.call(this, canvas, x, y, 200, 200);
+	constructor(canvas: Canvas2D, x: number, y: number) {
+		super(canvas, x, y, 200, 200);
 
 		this._ios.push(new NodeIO(canvas, NodeIO.TYPE_INPUT, this));
 		this._ios.push(new NodeIO(canvas, NodeIO.TYPE_OUTPUT, this));
 
-		this._textPanel = new LoweredPanel(this._x + 6, this._y + 26, this._width - 12, this._height - 32);
-		this._titleLabel = new Label("Dialog " + dlgIndex, this._x + 6, this._y + 6, this._width - 12, 20);
+		this._textPanel = new LoweredPanel(this.x + 6, this.y + 26, this.width - 12, this.height - 32);
+		this._titleLabel = new Label("Dialog " + dlgIndex, this.x + 6, this.y + 6, this.width - 12, 20);
 		this._titleLabel.setHorizontalAlignment(Label.ALIGN_CENTER);
 		this._titleLabel.setVerticalAlignment(Label.ALIGN_MIDDLE);
 
 		dlgIndex++;
-	},
+	}
 
-	setTitle: function(title) {
-		this._titleLabel.setText(title);
-	},
+	setTitle(title: string) { this._titleLabel.setText(title); }
 
-	getTitle: function() {
-		return this._titleLabel.getText();
-	},
+	getTitle() { return this._titleLabel.getText(); }
 
-	act: function(delta) {
-		Node.prototype.act.call(this, delta);
-		this._textPanel.setPosition(this._x + 6, this._y + 26);
-		this._textPanel.setSize(this._width - 12, this._height - 32);
-		this._titleLabel.setPosition(this._x + 6, this._y + 4);
-		this._titleLabel.setSize(this._width - 12, 20);
-	},
+	act(delta: number) {
+		super.act(delta);
+		this._textPanel.setPosition(this.x + 6, this.y + 26);
+		this._textPanel.setSize(this.width - 12, this.height - 32);
+		this._titleLabel.setPosition(this.x + 6, this.y + 4);
+		this._titleLabel.setSize(this.width - 12, 20);
+	}
 
-	render: function(ctx) {
-		Node.prototype.render.call(this, ctx);
+	render(ctx: CanvasRenderingContext2D) {
+		super.render(ctx);
 		this._textPanel.render(ctx);
 		this._titleLabel.render(ctx);
-	},
-	
-	destroy: function() {
-		this._textPanel.destroy();
-		this._textPanel = null;
-		this._titleLabel.destroy();
-		this._titleLabel = null;
-		Node.prototype.destroy.call(this);
 	}
 	
-});
-
-module.exports = self;
+	destroy() {
+		this._textPanel.destroy();
+		this._titleLabel.destroy();
+		super.destroy();
+	}
+	
+}
